@@ -15,7 +15,6 @@ class PositionsTableSeeder extends Seeder
         //
         $faker = \Faker\Factory::create('ru_RU');
 
-        // Create 50 product records
         for ($i = 0; $i < 100; $i++) {
           if($i == 0){
             $level = 1;
