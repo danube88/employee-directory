@@ -9,30 +9,8 @@
         <span v-if="!isFolder"><font-awesome-icon icon="folder" size="lg"/></span>
       </div>
       <div class="Content">
-        <table class="table table-sm table-borderless">
-          <tbody>
-            <tr>
-              <td>таб. номер:</td>
-              <td><h5>{{ item.table_number }}</h5></td>
-            </tr>
-            <tr>
-              <td>Фамилия Имя Отчество: </td>
-              <td><h4>{{ item.nameWorker }}</h4></td>
-            </tr>
-            <tr>
-              <td>Должность:</td>
-              <td>{{ item.name_position }}</td>
-            </tr>
-            <tr>
-              <td>Дата приема на работу:</td>
-              <td>{{ item.reception_date }}</td>
-            </tr>
-            <tr>
-              <td>Размер заработной платы:</td>
-              <td>{{ item.salary }} руб.</td>
-            </tr>
-          </tbody>
-        </table>
+        <h4>{{ item.name_position }}</h4>
+        <h5>{{ item.nameWorker }}</h5>
       </div>
     </div>
     <ul class="list-group Container" v-show="isOpen" v-if="isFolder">

@@ -11295,28 +11295,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'tree-item',
   props: {
@@ -47122,39 +47100,9 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("div", { staticClass: "Content" }, [
-        _c("table", { staticClass: "table table-sm table-borderless" }, [
-          _c("tbody", [
-            _c("tr", [
-              _c("td", [_vm._v("таб. номер:")]),
-              _vm._v(" "),
-              _c("td", [_c("h5", [_vm._v(_vm._s(_vm.item.table_number))])])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("Фамилия Имя Отчество: ")]),
-              _vm._v(" "),
-              _c("td", [_c("h4", [_vm._v(_vm._s(_vm.item.nameWorker))])])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("Должность:")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(_vm.item.name_position))])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("Дата приема на работу:")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(_vm.item.reception_date))])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("Размер заработной платы:")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(_vm.item.salary) + " руб.")])
-            ])
-          ])
-        ])
+        _c("h4", [_vm._v(_vm._s(_vm.item.name_position))]),
+        _vm._v(" "),
+        _c("h5", [_vm._v(_vm._s(_vm.item.nameWorker))])
       ])
     ]),
     _vm._v(" "),

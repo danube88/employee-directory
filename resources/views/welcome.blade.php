@@ -29,7 +29,7 @@
           <!-- Left Side Of Navbar -->
           <ul class="navbar-nav mr-auto">
             <router-link tag="li" to="/hierarchy" class="nav-item" v-bind:class="{active: isHierarchy}" v-on:click="isHierarchy=true">
-              <a class="nav-link">Дерево сотрудников</a>
+              <a class="nav-link">Иерархия сотрудников</a>
             </router-link>
           </ul>
           <!-- Right Side Of Navbar -->
