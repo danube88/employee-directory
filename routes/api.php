@@ -18,3 +18,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/hierarchy/data/index','HierarchyController@dataHierarchy');
+Route::get('/list/data/index','ListController@dataList');
