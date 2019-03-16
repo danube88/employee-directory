@@ -37,11 +37,4 @@ const routes = [
 
 const router = new VueRouter({ routes })
 
-const app = new Vue({ router,
-  data: function() {
-    return {
-      isHierarchy: true,
-      isList: false
-    }
-  }
-}).$mount('#app')
+const app = new Vue({ router }).$mount('#app')
