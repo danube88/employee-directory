@@ -11276,11 +11276,52 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      workers: []
+    };
+  },
   mounted: function mounted() {
-    this.isHierarchy = false;
-    this.isList = true;
-    console.log('Component mounted.');
+    var app = this;
+    axios.get('/api/list/data/index').then(function (resp) {
+      console.log(resp);
+      app.workers = resp.data;
+    }).catch(function (resp) {
+      console.log(resp);
+      alert("Could not load workers");
+    });
+    console.log('Component workers.');
   }
 });
 
@@ -15825,7 +15866,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.item {\n  display: block;\n  position: absolute;\n}\n.itemCurcor {\n  cursor: pointer;\n}\n.Content {\n  min-height: 18px;\n  margin-left:36px;\n}\n.Content h4{\n  font-weight: bold;\n}\n* html .Content {\n  height: 18px;\n}\n#tree li {\n  padding-right: 0rem;\n}\n.loading {\n  z-index: 1;\n  margin-top: 100px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: absolute;\n}\n", ""]);
+exports.push([module.i, "\n.item {\n  display: block;\n  position: absolute;\n}\n.itemCurcor {\n  cursor: pointer;\n}\n.Content {\n  min-height: 18px;\n  margin-left:36px;\n}\n.Content h4{\n  font-weight: bold;\n}\n* html .Content {\n  height: 18px;\n}\n#tree li {\n  padding-right: 0rem;\n}\n.loading {\n  z-index: 1;\n  margin-top: 100px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: absolute;\n}\n#navbarSupportedContent > ul.navbar-nav.mr-auto > li.nav-item.router-link-exact-active.router-link-active > a {\n  color: #fff;\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n", ""]);
 
 // exports
 
@@ -47102,7 +47143,39 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", [
+      _c("div", { staticClass: "table-responsive" }, [
+        _c("table", { staticClass: "table" }, [
+          _vm._m(1),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.workers, function(worker, index) {
+              return _c("tr", [
+                _c("td", [_vm._v(_vm._s(worker.table_number))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(worker.nameWorker))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(worker.name_position))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(worker.nameHead))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(worker.birthday))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(worker.reception_date))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(worker.salary))])
+              ])
+            }),
+            0
+          )
+        ])
+      ])
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
@@ -47113,6 +47186,28 @@ var staticRenderFns = [
       _c("p"),
       _c("h2", [_vm._v("Список сотрудников")]),
       _c("p")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Ф.И.О.")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Должность")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Ф.И.О. начальника")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Дата рождения")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Дата приема на работу")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Размер заработной платы")])
+      ])
     ])
   }
 ]
@@ -62030,13 +62125,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   routes: routes
 });
 var app = new Vue({
-  router: router,
-  data: function data() {
-    return {
-      isHierarchy: true,
-      isList: false
-    };
-  }
+  router: router
 }).$mount('#app');
 
 /***/ }),
