@@ -27,11 +27,11 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <!-- Left Side Of Navbar -->
-          <ul class="navbar-nav mr-auto">
-            <router-link tag="li" :to="{name: 'Hierarchy'}" class="nav-item" v-bind:class="{active: isHierarchy}" v-on:click="isHierarchy=!isHierarchy">
-              <a class="nav-link">Дерево сотрудников</a>
+          <ul class="navbar-nav nav-pills mr-auto">
+            <router-link tag="li" :to="{name: 'Hierarchy'}" class="nav-item">
+              <a class="nav-link">Иерархия сотрудников</a>
             </router-link>
-            <router-link tag="li" :to="{name: 'List'}" class="nav-item" v-bind:class="{active: isList}" v-on:click="isList=!isList">
+            <router-link tag="li" :to="{name: 'List'}" class="nav-item">
               <a class="nav-link">Список сотрудников</a>
             </router-link>
           </ul>
