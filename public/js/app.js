@@ -15778,7 +15778,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.item {\n  display: block;\n  position: absolute;\n}\n.itemCurcor {\n  cursor: pointer;\n}\n.Content {\n  min-height: 18px;\n  margin-left:36px;\n}\n.Content h4{\n  font-weight: bold;\n}\n* html .Content {\n  height: 18px;\n}\n#tree li {\n  padding-right: 0rem;\n}\n.loading {\n  z-index: 1;\n  margin-top: 100px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: absolute;\n}\n", ""]);
+exports.push([module.i, "\n.item {\n  display: block;\n  position: absolute;\n}\n.itemCurcor {\n  cursor: pointer;\n}\n.Content {\n  min-height: 18px;\n  margin-left:36px;\n}\n.Content h4{\n  font-weight: bold;\n}\n* html .Content {\n  height: 18px;\n}\n#tree li {\n  padding-right: 0rem;\n}\n.loading {\n  z-index: 1;\n  margin-top: 100px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: absolute;\n}\n#navbarSupportedContent > ul.navbar-nav.mr-auto > li.nav-item.router-link-exact-active.router-link-active > a {\n  color: #fff;\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n", ""]);
 
 // exports
 

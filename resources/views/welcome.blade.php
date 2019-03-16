@@ -27,8 +27,8 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <!-- Left Side Of Navbar -->
-          <ul class="navbar-nav mr-auto">
-            <router-link tag="li" to="/hierarchy" class="nav-item" v-bind:class="{active: isHierarchy}" v-on:click="isHierarchy=true">
+          <ul class="navbar-nav nav-pills mr-auto">
+            <router-link tag="li" to="/hierarchy" class="nav-item">
               <a class="nav-link">Иерархия сотрудников</a>
             </router-link>
           </ul>
