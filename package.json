@@ -27,6 +27,7 @@
         "@fortawesome/fontawesome-svg-core": "^1.2.15",
         "@fortawesome/free-solid-svg-icons": "^5.7.2",
         "@fortawesome/vue-fontawesome": "^0.1.5",
+        "vue-bootstrap4-table": "^1.1.2",
         "vue-router": "^3.0.2"
     }
 }
