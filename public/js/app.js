@@ -11312,6 +11312,10 @@ __webpack_require__.r(__webpack_exports__);
         name: "name_position",
         sort: true
       }, {
+        label: "Начальник",
+        name: "nameHead",
+        sort: true
+      }, {
         label: "Дата рождения",
         name: "birthday",
         sort: true
@@ -11336,9 +11340,7 @@ __webpack_require__.r(__webpack_exports__);
         per_page_options: [10, 25, 50, 75, 100],
         select_all_checkbox: false,
         global_search: {
-          //placeholder: "Enter custom Search text",
-          visibility: false //case_sensitive: false
-
+          placeholder: "Введите текст для поиска"
         }
       },
       queryParams: {

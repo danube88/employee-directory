@@ -23,7 +23,6 @@ class ListController extends Controller
         $sortOrder = 'asc';
       }
 
-      $total = Worker::all()->count();
       $workers = DB::table('workers as w')
                 ->leftJoin('positions as p', 'p.id', '=', 'w.position_id')
                 ->leftJoin('subordinations as s', 's.subordinate_id', '=', 'w.id')
@@ -36,14 +35,25 @@ class ListController extends Controller
                   DB::raw("DATE_FORMAT(w.reception_date,'%m.%d.%Y') as reception_date"),
                   "w.salary",
                   "p.name_position",
-                  "s.head_id"
-                ])
-                ->offset(($request->page - 1) * $param->per_page)
-                ->limit($param->per_page)
-                ->orderBy($sortName, $sortOrder)
-                ->get()
-                ->toArray();
+                  "s.head_id",
+                  DB::raw("CONCAT(ws.surname,' ',ws.name,' ',ws.patronymic) as nameHead"),
+                ]);
+      if ($param->global_search != "") {
+        $search = "%".$param->global_search."%";
+        $workers->where("w.table_number","like",$search)
+                ->orWhere("w.birthday","like",$search)
+                ->orWhere(DB::raw("CONCAT(w.surname,' ',w.name,' ',w.patronymic)"),"like",$search)
+                ->orWhere("w.salary","like",$search)
+                ->orWhere("w.reception_date","like",$search)
+                ->orWhere("p.name_position","like",$search)
+                ->orWhere(DB::raw("CONCAT(ws.surname,' ',ws.name,' ',ws.patronymic)"),"like",$search);
+      }
+      $total = $workers->count();
+      $workers->offset(($request->page - 1) * $param->per_page)
+              ->limit($param->per_page)
+              ->orderBy($sortName, $sortOrder);
+        $workers = $workers->get();
 
-      return Response::json(array('data' => $workers ,'total' => $total));
+      return Response::json(array('data' => $workers->toArray(),'total' => $total));
     }
 }
