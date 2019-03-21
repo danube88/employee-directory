@@ -14,7 +14,21 @@ library.add(faFolderPlus)
 library.add(faFolderMinus)
 library.add(faFolder)
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component(
+    'passport-clients',
+    require('./components/passport/Clients.vue').default
+);
+
+Vue.component(
+    'passport-authorized-clients',
+    require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+    'passport-personal-access-tokens',
+    require('./components/passport/PersonalAccessTokens.vue').default
+);
 
 const routes = [
       {
