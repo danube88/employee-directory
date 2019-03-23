@@ -19,9 +19,6 @@
     components: {
       HierarchyComponent,
       NavbarComponent
-    },
-    mounted() {
-      console.log('Component mounted.')
     }
   }
 </script>
