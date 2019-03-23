@@ -40,4 +40,9 @@ return [
         ],
     ],
 
+    'vue_client' => [
+        'id' => env('VUE_CLIENT_ID'),
+        'secret' => env('VUE_CLIENT_SECRET'),
+    ],
+
 ];

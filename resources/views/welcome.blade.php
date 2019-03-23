@@ -16,42 +16,9 @@
 </head>
 <body>
   <div id="app">
-    <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
-      <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">
-          {{ config('app.name', 'Laravel') }}
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <!-- Left Side Of Navbar -->
-          <ul class="navbar-nav nav-pills mr-auto">
-            <router-link tag="li" to="/hierarchy" class="nav-item">
-              <a class="nav-link">Иерархия сотрудников</a>
-            </router-link>
-            <router-link tag="li" to="/list" class="nav-item">
-              <a class="nav-link">Список сотрудников</a>
-            </router-link>
-          </ul>
-          <!-- Right Side Of Navbar -->
-          <ul class="navbar-nav ml-auto">
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <br/>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <router-view name="hierarchyComponent"></router-view>
-          <router-view></router-view>
-        </div>
-      </div>
-    </div>
+    <router-view name="appComponent"></router-view>
+    <router-view></router-view>
   </div>
-
   <!-- Scripts -->
   <script src="{{ asset('js/app.js') }}"></script>
 </body>

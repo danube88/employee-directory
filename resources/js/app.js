@@ -1,54 +1,16 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-import VueRouter from 'vue-router';
-window.Vue.use(VueRouter);
 
-//import ExampleComponent from './components/ExampleComponent.vue';
-import HierarchyComponent from './components/HierarchyComponent.vue';
-import ListComponent from './components/ListComponent.vue';
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFolderPlus,faFolderMinus,faFolder } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faFolderPlus)
-library.add(faFolderMinus)
-library.add(faFolder)
+import { router } from './router/routes';
+import { store } from './vuex/store';
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
-Vue.component(
-    'passport-clients',
-    require('./components/passport/Clients.vue').default
-);
-
-Vue.component(
-    'passport-authorized-clients',
-    require('./components/passport/AuthorizedClients.vue').default
-);
-
-Vue.component(
-    'passport-personal-access-tokens',
-    require('./components/passport/PersonalAccessTokens.vue').default
-);
-
-const routes = [
-      {
-        path: '/',
-        redirect: '/hierarchy'
-      },
-      {
-         path: '/hierarchy',
-         components: {
-             hierarchyComponent: HierarchyComponent
-         },
-         name: 'Hierarchy'
-      },
-      {
-         path: '/list',
-         component: ListComponent,
-         name: 'List'
+const app = new Vue({
+    created(){
+      if (this.$store.getters.isAuthenticated) {
+        this.$store.dispatch('userRequest');
       }
-     ]
-
-const router = new VueRouter({ routes })
-
-const app = new Vue({ router }).$mount('#app')
+    },
+    router,
+    store
+  }).$mount('#app')

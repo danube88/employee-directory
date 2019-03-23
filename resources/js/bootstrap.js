@@ -1,5 +1,6 @@
 
 window._ = require('lodash');
+window.Cookies = require('js-cookie');
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -54,3 +55,9 @@ if (token) {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+let bearer = Cookies.get('access_token');
+
+if (bearer) {
+    window.axios.defaults.headers.common['Authorization'] = bearer
+}

@@ -1,25 +1,17 @@
 <template>
   <div>
-    <navbar-component></navbar-component>
-    <br/>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <vue-bootstrap4-table :rows="rows"
+    <vue-bootstrap4-table :rows="rows"
                           :columns="columns"
                           :config="config"
                           @on-change-query="onChangeQuery"
                           :totalRows="total_rows">
-            <template slot="paginataion-previous-button">
-              Previous
-            </template>
-            <template slot="paginataion-next-button">
-              Next
-            </template>
-          </vue-bootstrap4-table>
-        </div>
-      </div>
-    </div>
+      <template slot="paginataion-previous-button">
+        Previous
+      </template>
+      <template slot="paginataion-next-button">
+        Next
+      </template>
+    </vue-bootstrap4-table>
   </div>
 </template>
 
