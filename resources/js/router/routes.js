@@ -25,6 +25,9 @@ import Register from './../components/auth/register'
 import PasswordEmail from '../components/auth/password/email'
 import PasswordReset from '../components/auth/password/reset'
 
+import CreateEmployee from './../components/CreateEmployeeComponent.vue';
+import EditEmployee from './../components/EditEmployeeComponent.vue';
+
 import AppComponent from './../components/AppComponent.vue';
 import ListComponent from './../components/ListComponent.vue';
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -87,7 +90,19 @@ const routes = [
         name: 'home',
         component: HomeLayout,
         beforeEnter: ifAuthenticated,
-      }
+      },
+      {
+        path: '/home/employee/create',
+        component: CreateEmployee,
+        name: 'createEmployee',
+        beforeEnter: ifAuthenticated,
+      },
+      {
+        path: '/home/employee/edit/:id',
+        component: EditEmployee,
+        name: 'editEmployee',
+        beforeEnter: ifAuthenticated,
+      },
      ]
 
 export const router = new VueRouter({

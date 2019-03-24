@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="form-group">
+      <router-link :to="{name: 'createEmployee'}" class="btn btn-success">Create new Employee</router-link>
+    </div>
     <vue-bootstrap4-table :rows="rows"
                           :columns="columns"
                           :config="config"

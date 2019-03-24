@@ -45,6 +45,16 @@ Route::get('/password/reset', function () {
     return view('welcome');
 });
 
-Route::get('/home', function () {
+Route::group(['prefix' => '/home','middleware'=>'auth:api'], function () {
+  Route::get('/', function () {
     return view('welcome');
-})->middleware('auth:api');
+  });
+
+  Route::get('/employee/create', function () {
+    return view('welcome');
+  });
+
+  Route::get('/employee/edit/:id', function () {
+    return view('welcome');
+  });
+});
