@@ -64,8 +64,6 @@ class EmployeeController extends Controller
     public function dataHeads(Request $request)
     {
       $input = $request->except('_token');
-      //$input[] = $request->id;
-      //$input[] = $request->level;
 
       $rules =
       [
