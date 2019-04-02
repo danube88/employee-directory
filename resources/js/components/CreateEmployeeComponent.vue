@@ -66,7 +66,7 @@
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">Должность:</label>
                   <div class="col-sm-9">
-                    <select class="form-control" v-model="employee.position" @change="onChange">
+                    <select class="form-control" v-model="employee.position_id" @change="onChange">
                       <option disabled value="">Выберите должность</option>
                       <option v-for="pos in positions" v-bind:value="pos.id">
                         {{ pos.id }}. {{ pos.name_position }}
@@ -122,12 +122,12 @@
       return {
         employee: {
           head: '',
-          table_number: '',
+          table_number: '000000',
           surname: '',
           name: '',
           patronymic: '',
           birthday: '',
-          position: '',
+          position_id: '',
           salary: '',
           reception_date: '',
         },
@@ -164,12 +164,13 @@
         });
       },
       onChange(){
-        var data = this.positions[this.employee.position];
+        var data = this.positions[this.employee.position_id - 1];
         var app = this;
         this.employee.salary = data.default_salary;
         axios.get('/api/data/heads',{
           params: {
-            "level": data.level
+            "level": data.level,
+            "table_number": app.employee.table_number,
           }
         })
         .then( function(resp) {
@@ -230,10 +231,10 @@
                 app.hasError = true;
                 app.errorHead = resp.data.errors.head[0];
               }
-              if(resp.data.errors.position){
+              if(resp.data.errors.position_id){
                 app.isActive = false;
                 app.hasError = true;
-                app.errorPosition = resp.data.errors.position[0];
+                app.errorPosition = resp.data.errors.position_id[0];
               }
               if(resp.data.errors.birthday){
                 app.isActive = false;
