@@ -54,7 +54,7 @@ Route::group(['prefix' => '/home','middleware'=>'auth:api'], function () {
     return view('welcome');
   });
 
-  Route::get('/employee/edit/:id', function () {
+  Route::get('/employee/edit/{id}', function () {
     return view('welcome');
   });
 });

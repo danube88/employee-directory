@@ -14,6 +14,11 @@
       <template slot="paginataion-next-button">
         Next
       </template>
+      <template slot="action" slot-scope="props">
+        <router-link :to="{name: 'editEmployee', params: {id: props.cell_value}}" class="btn btn-xs btn-primary">
+          Edit
+        </router-link>
+    </template>
     </vue-bootstrap4-table>
   </div>
 </template>
@@ -66,6 +71,13 @@ export default {
                     label: "Размер заработной платы",
                     name: "salary",
                     sort: true
+                },
+                {
+                    label: "",
+                    name: "id",
+                    sort: false,
+                    search: false,
+                    slot_name: "action"
                 }],
             config: {
 
@@ -104,7 +116,7 @@ export default {
       },
       fetchData() {
         var self = this;
-        axios.get('/api/list/data/index', {
+        axios.get('/api/employee/data/list', {
           params: {
             "queryParams": this.queryParams,
             "page": this.queryParams.page

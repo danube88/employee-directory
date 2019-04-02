@@ -9,10 +9,57 @@ use DB;
 use App\Position;
 use App\Worker;
 use App\Subordination;
+use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
     //
+    public function index(Request $request)
+    {
+      // code...
+      $param = json_decode($request->queryParams);
+      if(!empty($param->sort)){
+        $sortName = $param->sort[0]->name;
+        $sortOrder = $param->sort[0]->order;
+      } else {
+        $sortName = 'table_number';
+        $sortOrder = 'asc';
+      }
+
+      $workers = DB::table('workers as w')
+                ->leftJoin('positions as p', 'p.id', '=', 'w.position_id')
+                ->leftJoin('subordinations as s', 's.subordinate_id', '=', 'w.id')
+                ->leftJoin('workers as ws', 'ws.id', '=', 's.head_id')
+                ->select([
+                  "w.id",
+                  "w.table_number",
+                  DB::raw("DATE_FORMAT(w.birthday,'%m.%d.%Y') as birthday"),
+                  DB::raw("CONCAT(w.surname,' ',w.name,' ',w.patronymic) as nameWorker"),
+                  DB::raw("DATE_FORMAT(w.reception_date,'%m.%d.%Y') as reception_date"),
+                  "w.salary",
+                  "p.name_position",
+                  "s.head_id",
+                  DB::raw("CONCAT(ws.surname,' ',ws.name,' ',ws.patronymic) as nameHead"),
+                ]);
+      if ($param->global_search != "") {
+        $search = "%".$param->global_search."%";
+        $workers->where("w.table_number","like",$search)
+                ->orWhere("w.birthday","like",$search)
+                ->orWhere(DB::raw("CONCAT(w.surname,' ',w.name,' ',w.patronymic)"),"like",$search)
+                ->orWhere("w.salary","like",$search)
+                ->orWhere("w.reception_date","like",$search)
+                ->orWhere("p.name_position","like",$search)
+                ->orWhere(DB::raw("CONCAT(ws.surname,' ',ws.name,' ',ws.patronymic)"),"like",$search);
+      }
+      $total = $workers->count();
+      $workers->offset(($request->page - 1) * $param->per_page)
+              ->limit($param->per_page)
+              ->orderBy($sortName, $sortOrder);
+      $workers = $workers->get();
+
+      return Response::json(array('data' => $workers->toArray(),'total' => $total));
+    }
+
     public function store(Request $request)
     {
       $input = $request->except('_token');
@@ -54,6 +101,69 @@ class EmployeeController extends Controller
       }
     }
 
+    public function show($id)
+    {
+      $worker = Worker::with('position')->findOrFail($id);
+      $head = Subordination::where('subordinate_id','=',$id)->select('head_id')->first();
+      $heads = DB::table('workers')
+                ->leftJoin('positions', 'positions.id', '=', 'workers.position_id')
+                ->where('positions.level','<',$worker->position->level)
+                ->where('workers.id','!=',$id)
+                ->select([
+                    'workers.id',
+                    'workers.table_number',
+                    DB::raw("CONCAT(workers.surname,' ',workers.name,' ',workers.patronymic) as nameWorker"),
+                    'positions.name_position'
+                  ])
+                ->orderBy('workers.table_number', 'asc')
+                ->get()->toArray();
+      return Response::json(array('data' => $worker,'head' => $head,'heads' => $heads));
+    }
+
+    public function update(Request $request, $id)
+    {
+      $input = $request->except('_token');
+
+      $rules = [
+          'head' => 'numeric',
+          'table_number' => ['required','min:6','max:6',Rule::unique('workers')->ignore($id),],
+          'surname' => 'required|min:2|max:128',
+          'name' => 'required|min:2|max:128',
+          'patronymic' => 'required|min:2|max:128',
+          'birthday' => 'required|date|before_or_equal:'.date("Y-m-d").'',
+          'position_id' => 'required|numeric',
+          'salary' => 'required|numeric',
+          'reception_date' => 'required|date|before_or_equal:'.date("Y-m-d").''
+      ];
+      $validator = Validator::make($input, $rules);
+      if ($validator->fails()) {
+        return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
+      } else {
+        //$position = Position::where('id', '=', $input['position'])->first()->id;
+        $worker = Worker::find($id)->update([
+          'surname' => $input['surname'],
+          'name' => $input['name'],
+          'patronymic' => $input['patronymic'],
+          'table_number' => $input['table_number'],
+          'birthday' => $input['birthday'],
+          'position_id' => $input['position_id'],
+          'salary' => $input['salary'],
+          'reception_date' => $input['reception_date']
+        ]);
+
+        if ($input['head'] != 0) {
+          $subordination = Subordination::updateOrCreate(
+            ['subordinate_id' => $id],
+            ['head_id' => $input['head']]
+          );
+        } else {
+          Subordination::where('subordinate_id','=',$id)->delete();
+        }
+
+        return Response::json(['data'=>'Карточка сотрудника №'.$input['table_number'].' изменена']);
+      }
+    }
+
     public function dataPositions()
     {
       $positions = Position::select('id','name_position','default_salary','level')->get();
@@ -67,16 +177,20 @@ class EmployeeController extends Controller
 
       $rules =
       [
-          'level' => 'required|numeric'
+          'level' => 'required|numeric',
+          'table_number' => 'numeric'
       ];
       $validator = Validator::make($input, $rules);
       if ($validator->fails()) {
-        return Response::json(array('errors' => $validator->getMessageBag()->toArray(),'data' => $input));
+        return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
       } else {
         $guide = DB::table('workers')
             ->leftJoin('positions', 'positions.id', '=', 'workers.position_id')
-            ->where('positions.level','<',$input['level'])
-            ->select([
+            ->where('positions.level','<',$input['level']);
+      if($input['table_number'] != ''){
+        $guide->where('workers.table_number','!=',$input['table_number']);
+      }
+      $guide = $guide->select([
               'workers.id',
               'workers.table_number',
               DB::raw("CONCAT(workers.surname,' ',workers.name,' ',workers.patronymic) as nameWorker"),

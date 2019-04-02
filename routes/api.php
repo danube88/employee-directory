@@ -21,4 +21,7 @@ Route::get('/hierarchy/data/index','HierarchyController@dataHierarchy');
 Route::get('/list/data/index','ListController@dataList');
 Route::get('/data/positions','EmployeeController@dataPositions')->middleware('auth:api');
 Route::get('/data/heads','EmployeeController@dataHeads')->middleware('auth:api');
+Route::get('/employee/data/list','EmployeeController@index')->middleware('auth:api');
 Route::post('/employee/data/create','EmployeeController@store')->middleware('auth:api');
+Route::get('/employee/data/edit/{id}','EmployeeController@show')->middleware('auth:api');
+Route::put('/employee/data/update/{id}','EmployeeController@update')->middleware('auth:api');

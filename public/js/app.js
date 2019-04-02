@@ -11527,11 +11527,279 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _layout_navbarAuth_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./layout/navbarAuth.vue */ "./resources/js/components/layout/navbarAuth.vue");
 //
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      employee: {
+        head: '',
+        table_number: '',
+        surname: '',
+        name: '',
+        patronymic: '',
+        birthday: '',
+        position_id: '',
+        salary: '',
+        reception_date: ''
+      },
+      positions: [],
+      heads: [],
+      employeeId: null,
+      isActive: true,
+      hasError: false,
+      errorSurname: '',
+      errorName: '',
+      errorPatronymic: '',
+      errorBirthday: '',
+      errorReceptionDate: '',
+      errorSalary: '',
+      errorPosition: '',
+      errorHead: '',
+      errorTableNumber: ''
+    };
+  },
+  components: {
+    NavbarAuthComponent: _layout_navbarAuth_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  mounted: function mounted() {
+    var app = this;
+    var id = app.$route.params.id;
+    app.dataPositions();
+    axios.get('/api/employee/data/edit/' + id).then(function (resp) {
+      app.employee = resp.data.data;
+      app.employee.head = resp.data.head ? resp.data.head.head_id : '';
+      app.heads = resp.data.heads;
+    }).catch(function () {
+      alert("Could not load your employee");
+    });
+  },
+  methods: {
+    dataPositions: function dataPositions() {
+      var app = this;
+      axios.get('/api/data/positions').then(function (resp) {
+        app.positions = resp.data;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    onChange: function onChange() {
+      var data = this.positions[this.employee.position_id];
+      var app = this;
+      this.employee.salary = data.default_salary;
+      axios.get('/api/data/heads', {
+        params: {
+          "level": data.level,
+          "table_number": app.employee.table_number
+        }
+      }).then(function (resp) {
+        app.employee.head = '';
+        app.heads = resp.data;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    saveForm: function saveForm() {
+      event.preventDefault();
+      var app = this;
+      app.isActive = true;
+      app.hasError = false;
+      app.errorSurname = '';
+      app.errorName = '';
+      app.errorPatronymic = '';
+      app.errorBirthday = '';
+      app.errorReceptionDate = '';
+      app.errorSalary = '';
+      app.errorPosition = '';
+      app.errorHead = '';
+      app.errorTableNumber = '';
+      var data = app.employee;
+      var id = app.$route.params.id;
+      axios.put('/api/employee/data/update/' + id, data).then(function (resp) {
+        if (resp.data.errors) {
+          if (resp.data.errors.table_number) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorTableNumber = resp.data.errors.table_number[0];
+          }
+
+          if (resp.data.errors.name) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorName = resp.data.errors.name[0];
+          }
+
+          if (resp.data.errors.surname) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorSurname = resp.data.errors.surname[0];
+          }
+
+          if (resp.data.errors.patronymic) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorPatronymic = resp.data.errors.patronymic[0];
+          }
+
+          if (resp.data.errors.salary) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorSalary = resp.data.errors.salary[0];
+          }
+
+          if (resp.data.errors.head) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorHead = resp.data.errors.head[0];
+          }
+
+          if (resp.data.errors.position) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorPosition = resp.data.errors.position[0];
+          }
+
+          if (resp.data.errors.birthday) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorBirthday = resp.data.errors.birthday[0];
+          }
+
+          if (resp.data.errors.reception_date) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorReceptionDate = resp.data.errors.reception_date[0];
+          }
+        } else {
+          alert(resp.data.data);
+          app.$router.push({
+            path: '/home'
+          });
+        }
+      }).catch(function (resp) {
+        console.log(resp);
+        alert("Could not update your employee");
+      });
+    }
+  }
+});
 
 /***/ }),
 
@@ -11618,6 +11886,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -11659,6 +11932,12 @@ __webpack_require__.r(__webpack_exports__);
         label: "Размер заработной платы",
         name: "salary",
         sort: true
+      }, {
+        label: "",
+        name: "id",
+        sort: false,
+        search: false,
+        slot_name: "action"
       }],
       config: {
         card_title: "Список сотрудников",
@@ -11695,7 +11974,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     fetchData: function fetchData() {
       var self = this;
-      axios.get('/api/list/data/index', {
+      axios.get('/api/employee/data/list', {
         params: {
           "queryParams": this.queryParams,
           "page": this.queryParams.page
@@ -49072,9 +49351,595 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c(
+    "div",
+    [
+      _c("navbarAuth-component"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-12" }, [
+            _c("div", { staticClass: "card" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _vm._m(0),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "control-label",
+                    class: { hidden: _vm.isActive, "text-danger": _vm.hasError }
+                  },
+                  [_vm._v(_vm._s(_vm.errorTableNumber))]
+                ),
+                _vm._v(" "),
+                _c("br"),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group row" }, [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-5" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.employee.table_number,
+                          expression: "employee.table_number"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "number", value: "" },
+                      domProps: { value: _vm.employee.table_number },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.employee,
+                            "table_number",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      submit: function($event) {
+                        return _vm.saveForm()
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorSurname))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
+                        _vm._v("Фамилия:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.employee.surname,
+                              expression: "employee.surname"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Введите фамилию"
+                          },
+                          domProps: { value: _vm.employee.surname },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.employee,
+                                "surname",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorName))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
+                        _vm._v("Имя:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.employee.name,
+                              expression: "employee.name"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", placeholder: "Введите имя" },
+                          domProps: { value: _vm.employee.name },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.employee,
+                                "name",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorPatronymic))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
+                        _vm._v("Отчество:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.employee.patronymic,
+                              expression: "employee.patronymic"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Введите отчество"
+                          },
+                          domProps: { value: _vm.employee.patronymic },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.employee,
+                                "patronymic",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorBirthday))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
+                        _vm._v("День рождение:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.employee.birthday,
+                              expression: "employee.birthday"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "date" },
+                          domProps: { value: _vm.employee.birthday },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.employee,
+                                "birthday",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorReceptionDate))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
+                        _vm._v("Дата приема на работу:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-9" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.employee.reception_date,
+                              expression: "employee.reception_date"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "date" },
+                          domProps: { value: _vm.employee.reception_date },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.employee,
+                                "reception_date",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorPosition))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
+                        _vm._v("Должность:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-9" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.employee.position_id,
+                                expression: "employee.position_id"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: [
+                                function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "position_id",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                },
+                                _vm.onChange
+                              ]
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { disabled: "", value: "" } },
+                              [_vm._v("Выберите должность")]
+                            ),
+                            _vm._v(" "),
+                            _vm._l(_vm.positions, function(pos) {
+                              return _c(
+                                "option",
+                                { domProps: { value: pos.id } },
+                                [
+                                  _vm._v(
+                                    "\n                      " +
+                                      _vm._s(pos.id) +
+                                      ". " +
+                                      _vm._s(pos.name_position) +
+                                      "\n                    "
+                                  )
+                                ]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorSalary))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "row" }, [
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group col-sm-9" }, [
+                        _c("div", { staticClass: "input-group" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.employee.salary,
+                                expression: "employee.salary"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "number",
+                              step: "0.01",
+                              value: "0.00",
+                              placeholder: "00,00"
+                            },
+                            domProps: { value: _vm.employee.salary },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.employee,
+                                  "salary",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm._m(3)
+                        ])
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "control-label",
+                        class: {
+                          hidden: _vm.isActive,
+                          "text-danger": _vm.hasError
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.errorHead))]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
+                        _vm._v("Начальник:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-9" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.employee.head,
+                                expression: "employee.head"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.employee,
+                                  "head",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { disabled: "", value: "" } },
+                              [_vm._v("Выберите начальника")]
+                            ),
+                            _vm._v(" "),
+                            _vm._l(_vm.heads, function(h) {
+                              return _c(
+                                "option",
+                                { domProps: { value: h.id } },
+                                [
+                                  _vm._v(
+                                    "\n                      " +
+                                      _vm._s(h.table_number) +
+                                      ": " +
+                                      _vm._s(h.nameWorker) +
+                                      " / " +
+                                      _vm._s(h.name_position) +
+                                      "\n                    "
+                                  )
+                                ]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _vm._m(4)
+                  ]
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ],
+    1
+  )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "container-fluid" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-xs-12 col-md-12 text-center" }, [
+          _c("h3", { staticClass: "card-title" }, [
+            _vm._v("Изменение данных Сотрудника")
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { staticClass: "col-sm-7 col-form-label" }, [
+      _c("h5", { staticClass: "card-title" }, [
+        _vm._v("Карточка сотрудника №")
+      ]),
+      _c("sub", [_vm._v("(6 цифр)")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group col-sm-3" }, [
+      _c("label", { staticClass: "col-form-label" }, [
+        _vm._v("Размер заработной платы:")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-append" }, [
+      _c("span", { staticClass: "input-group-text" }, [_vm._v("₽")]),
+      _vm._v(" "),
+      _c("span", { staticClass: "input-group-text" }, [_vm._v("0,00")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-xs-12 form-group" }, [
+        _c("button", { staticClass: "btn btn-success" }, [_vm._v("Изменить")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -49171,7 +50036,29 @@ var render = function() {
             config: _vm.config,
             totalRows: _vm.total_rows
           },
-          on: { "on-change-query": _vm.onChangeQuery }
+          on: { "on-change-query": _vm.onChangeQuery },
+          scopedSlots: _vm._u([
+            {
+              key: "action",
+              fn: function(props) {
+                return [
+                  _c(
+                    "router-link",
+                    {
+                      staticClass: "btn btn-xs btn-primary",
+                      attrs: {
+                        to: {
+                          name: "editEmployee",
+                          params: { id: props.cell_value }
+                        }
+                      }
+                    },
+                    [_vm._v("\n        Edit\n      ")]
+                  )
+                ]
+              }
+            }
+          ])
         },
         [
           _c("template", { slot: "paginataion-previous-button" }, [

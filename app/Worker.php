@@ -17,4 +17,9 @@ class Worker extends Model
         'salary',
         'reception_date'
     ];
+
+    public function position()
+    {
+      return $this->belongsTo('App\Position','position_id','id');
+    }
 }
