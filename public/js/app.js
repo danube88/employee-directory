@@ -11378,12 +11378,12 @@ __webpack_require__.r(__webpack_exports__);
     return {
       employee: {
         head: '',
-        table_number: '',
+        table_number: '000000',
         surname: '',
         name: '',
         patronymic: '',
         birthday: '',
-        position: '',
+        position_id: '',
         salary: '',
         reception_date: ''
       },
@@ -11418,12 +11418,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     onChange: function onChange() {
-      var data = this.positions[this.employee.position];
+      var data = this.positions[this.employee.position_id - 1];
       var app = this;
       this.employee.salary = data.default_salary;
       axios.get('/api/data/heads', {
         params: {
-          "level": data.level
+          "level": data.level,
+          "table_number": app.employee.table_number
         }
       }).then(function (resp) {
         app.employee.head = '';
@@ -11485,10 +11486,10 @@ __webpack_require__.r(__webpack_exports__);
             app.errorHead = resp.data.errors.head[0];
           }
 
-          if (resp.data.errors.position) {
+          if (resp.data.errors.position_id) {
             app.isActive = false;
             app.hasError = true;
-            app.errorPosition = resp.data.errors.position[0];
+            app.errorPosition = resp.data.errors.position_id[0];
           }
 
           if (resp.data.errors.birthday) {
@@ -11891,6 +11892,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -11985,6 +11991,17 @@ __webpack_require__.r(__webpack_exports__);
       }).catch(function (error) {
         console.log(error);
       });
+    },
+    deleteEntry: function deleteEntry(id, index) {
+      if (confirm("Do you really want to delete it?")) {
+        var app = this;
+        axios.delete('/api/employee/data/delete/' + id).then(function (resp) {
+          alert(resp.data.data);
+          app.rows.splice(index, 1);
+        }).catch(function (resp) {
+          alert("Could not delete employee");
+        });
+      }
     }
   }
 });
@@ -49071,8 +49088,8 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.employee.position,
-                                expression: "employee.position"
+                                value: _vm.employee.position_id,
+                                expression: "employee.position_id"
                               }
                             ],
                             staticClass: "form-control",
@@ -49090,7 +49107,7 @@ var render = function() {
                                     })
                                   _vm.$set(
                                     _vm.employee,
-                                    "position",
+                                    "position_id",
                                     $event.target.multiple
                                       ? $$selectedVal
                                       : $$selectedVal[0]
@@ -50054,6 +50071,20 @@ var render = function() {
                       }
                     },
                     [_vm._v("\n        Edit\n      ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "a",
+                    {
+                      staticClass: "btn btn-xs btn-danger",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          return _vm.deleteEntry(props.cell_value, props.row)
+                        }
+                      }
+                    },
+                    [_vm._v("\n        Delete\n      ")]
                   )
                 ]
               }

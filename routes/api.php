@@ -25,3 +25,4 @@ Route::get('/employee/data/list','EmployeeController@index')->middleware('auth:a
 Route::post('/employee/data/create','EmployeeController@store')->middleware('auth:api');
 Route::get('/employee/data/edit/{id}','EmployeeController@show')->middleware('auth:api');
 Route::put('/employee/data/update/{id}','EmployeeController@update')->middleware('auth:api');
+Route::delete('/employee/data/delete/{id}','EmployeeController@destroy')->middleware('auth:api');

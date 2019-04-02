@@ -71,7 +71,7 @@ class EmployeeController extends Controller
           'name' => 'required|min:2|max:128',
           'patronymic' => 'required|min:2|max:128',
           'birthday' => 'required|date|before_or_equal:'.date("Y-m-d").'',
-          'position' => 'required|numeric',
+          'position_id' => 'required|numeric',
           'salary' => 'required|numeric',
           'reception_date' => 'required|date|before_or_equal:'.date("Y-m-d").''
       ];
@@ -79,6 +79,9 @@ class EmployeeController extends Controller
       if ($validator->fails()) {
         return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
       } else {
+        if($input['table_number'] == '000000'){
+          return Response::json(array('errors' => array('table_number' => ['Table number must not be 000000!'])));
+        }
         //$position = Position::where('id', '=', $input['position'])->first()->id;
         $worker = Worker::create([
           'surname' => $input['surname'],
@@ -86,7 +89,7 @@ class EmployeeController extends Controller
           'patronymic' => $input['patronymic'],
           'table_number' => $input['table_number'],
           'birthday' => $input['birthday'],
-          'position_id' => $input['position'],
+          'position_id' => $input['position_id'],
           'salary' => $input['salary'],
           'reception_date' => $input['reception_date']
         ]);
@@ -162,6 +165,20 @@ class EmployeeController extends Controller
 
         return Response::json(['data'=>'Карточка сотрудника №'.$input['table_number'].' изменена']);
       }
+    }
+
+    public function destroy($id)
+    {
+        //
+        $worker = Worker::where('id','=',$id)->first();
+        $head = Subordination::where('head_id','=',$worker->id)->count();
+        if($head > 0){
+          return Response::json(array('errors' => ['data'=>'Данный сотрудник имеет подчиненных, и не может быть удален']));
+        } else {
+          Subordination::where('subordinate_id','=',$worker->id)->delete();
+          Worker::find($worker->id)->delete();
+          return Response::json(['data'=>'Карточка '.$worker->table_number.' сотрудника удалена']);
+        }
     }
 
     public function dataPositions()

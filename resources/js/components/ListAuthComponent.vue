@@ -18,6 +18,11 @@
         <router-link :to="{name: 'editEmployee', params: {id: props.cell_value}}" class="btn btn-xs btn-primary">
           Edit
         </router-link>
+        <a href="#"
+          class="btn btn-xs btn-danger"
+          v-on:click="deleteEntry(props.cell_value, props.row)">
+          Delete
+        </a>
     </template>
     </vue-bootstrap4-table>
   </div>
@@ -129,6 +134,19 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
+      },
+      deleteEntry(id, index) {
+        if (confirm("Do you really want to delete it?")) {
+          var app = this;
+          axios.delete('/api/employee/data/delete/' + id)
+            .then(function (resp) {
+              alert(resp.data.data);
+              app.rows.splice(index, 1);
+          })
+            .catch(function (resp) {
+              alert("Could not delete employee");
+          });
+        }
       }
     }
 }
