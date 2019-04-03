@@ -11372,12 +11372,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       employee: {
         head: '',
+        photo: '../../img/example.jpg',
         table_number: '000000',
         surname: '',
         name: '',
@@ -11399,7 +11418,8 @@ __webpack_require__.r(__webpack_exports__);
       errorSalary: '',
       errorPosition: '',
       errorHead: '',
-      errorTableNumber: ''
+      errorTableNumber: '',
+      errorPhoto: ''
     };
   },
   components: {
@@ -11447,13 +11467,30 @@ __webpack_require__.r(__webpack_exports__);
       app.errorPosition = '';
       app.errorHead = '';
       app.errorTableNumber = '';
-      var data = app.employee;
+      var files = app.$refs.photo.files;
+      var data = new FormData();
+      data.append('head', app.employee.head);
+      data.append('table_number', app.employee.table_number);
+      data.append('surname', app.employee.surname);
+      data.append('name', app.employee.name);
+      data.append('patronymic', app.employee.patronymic);
+      data.append('birthday', app.employee.birthday);
+      data.append('position_id', app.employee.position_id);
+      data.append('salary', app.employee.salary);
+      data.append('reception_date', app.employee.reception_date);
+      data.append('photo', files[0]);
       axios.post('/api/employee/data/create', data).then(function (resp) {
         if (resp.data.errors) {
           if (resp.data.errors.table_number) {
             app.isActive = false;
             app.hasError = true;
             app.errorTableNumber = resp.data.errors.table_number[0];
+          }
+
+          if (resp.data.errors.photo) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorPhoto = resp.data.errors.photo[0];
           }
 
           if (resp.data.errors.name) {
@@ -11513,6 +11550,35 @@ __webpack_require__.r(__webpack_exports__);
         console.log(resp);
         alert("Could not create your employee");
       });
+    },
+    onFileChange: function onFileChange() {
+      var files = this.$refs.photo.files;
+      var app = this;
+
+      if (files && files[0]) {
+        if (files[0].type.match('image.*')) {
+          if (files[0].size > 1048576) {
+            alert('The file size is more than 1 MB');
+            this.$refs.photo.value = null;
+          } else {
+            alert('Good image file');
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+              app.employee.photo = e.target.result;
+            };
+
+            reader.readAsDataURL(files[0]);
+          }
+        } else {
+          alert('Not image');
+          this.$refs.photo.value = null;
+        }
+      }
+    },
+    onFileDelete: function onFileDelete() {
+      this.employee.photo = '../../img/example.jpg';
+      this.$refs.photo.value = null;
     }
   }
 });
@@ -11646,12 +11712,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       employee: {
         head: '',
+        photo: '',
         table_number: '',
         surname: '',
         name: '',
@@ -11661,6 +11748,7 @@ __webpack_require__.r(__webpack_exports__);
         salary: '',
         reception_date: ''
       },
+      photoDel: '',
       positions: [],
       heads: [],
       employeeId: null,
@@ -11674,7 +11762,8 @@ __webpack_require__.r(__webpack_exports__);
       errorSalary: '',
       errorPosition: '',
       errorHead: '',
-      errorTableNumber: ''
+      errorTableNumber: '',
+      errorPhoto: ''
     };
   },
   components: {
@@ -11683,6 +11772,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var app = this;
     var id = app.$route.params.id;
+    app.photoDel = 0;
     app.dataPositions();
     axios.get('/api/employee/data/edit/' + id).then(function (resp) {
       app.employee = resp.data.data;
@@ -11731,14 +11821,38 @@ __webpack_require__.r(__webpack_exports__);
       app.errorPosition = '';
       app.errorHead = '';
       app.errorTableNumber = '';
-      var data = app.employee;
+      app.errorPhoto = '';
       var id = app.$route.params.id;
-      axios.put('/api/employee/data/update/' + id, data).then(function (resp) {
+      var files = app.$refs.photo.files;
+      var data = new FormData();
+      data.append('_method', 'PUT');
+      data.append('head', app.employee.head);
+      data.append('table_number', app.employee.table_number);
+      data.append('surname', app.employee.surname);
+      data.append('name', app.employee.name);
+      data.append('patronymic', app.employee.patronymic);
+      data.append('birthday', app.employee.birthday);
+      data.append('position_id', app.employee.position_id);
+      data.append('salary', app.employee.salary);
+      data.append('reception_date', app.employee.reception_date);
+
+      if (files[0]) {
+        data.append('photo', files[0]);
+      }
+
+      data.append('photoDelete', app.photoDel);
+      axios.post('/api/employee/data/update/' + id, data).then(function (resp) {
         if (resp.data.errors) {
           if (resp.data.errors.table_number) {
             app.isActive = false;
             app.hasError = true;
             app.errorTableNumber = resp.data.errors.table_number[0];
+          }
+
+          if (resp.data.errors.photo) {
+            app.isActive = false;
+            app.hasError = true;
+            app.errorPhoto = resp.data.errors.photo[0];
           }
 
           if (resp.data.errors.name) {
@@ -11798,6 +11912,37 @@ __webpack_require__.r(__webpack_exports__);
         console.log(resp);
         alert("Could not update your employee");
       });
+    },
+    onFileChange: function onFileChange() {
+      var files = this.$refs.photo.files;
+      var app = this;
+
+      if (files && files[0]) {
+        if (files[0].type.match('image.*')) {
+          if (files[0].size > 1048576) {
+            alert('The file size is more than 1 MB');
+            this.$refs.photo.value = null;
+          } else {
+            alert('Good image file');
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+              app.employee.photo = e.target.result;
+              app.photoDel = 0;
+            };
+
+            reader.readAsDataURL(files[0]);
+          }
+        } else {
+          alert('Not image');
+          this.$refs.photo.value = null;
+        }
+      }
+    },
+    onFileDelete: function onFileDelete() {
+      this.employee.photo = '../../../img/example.jpg';
+      this.$refs.photo.value = null;
+      this.photoDel = 1;
     }
   }
 });
@@ -11897,6 +12042,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -11914,6 +12062,12 @@ __webpack_require__.r(__webpack_exports__);
         sort: true,
         initial_sort: true,
         initial_sort_order: "asc"
+      }, {
+        label: "Фoto",
+        name: "photo",
+        sort: false,
+        search: false,
+        slot_name: "photo"
       }, {
         label: "ФИО",
         name: "nameWorker",
@@ -12044,6 +12198,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -12061,6 +12218,12 @@ __webpack_require__.r(__webpack_exports__);
         sort: true,
         initial_sort: true,
         initial_sort_order: "asc"
+      }, {
+        label: "Фoto",
+        name: "photo",
+        sort: false,
+        search: false,
+        slot_name: "photo"
       }, {
         label: "ФИО",
         name: "nameWorker",
@@ -48827,458 +48990,564 @@ var render = function() {
                     }
                   },
                   [
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorSurname))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Фамилия:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.surname,
-                              expression: "employee.surname"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Введите фамилию"
-                          },
-                          domProps: { value: _vm.employee.surname },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "surname",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorName))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Имя:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.name,
-                              expression: "employee.name"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "Введите имя" },
-                          domProps: { value: _vm.employee.name },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "name",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorPatronymic))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Отчество:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.patronymic,
-                              expression: "employee.patronymic"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Введите отчество"
-                          },
-                          domProps: { value: _vm.employee.patronymic },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "patronymic",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorBirthday))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("День рождение:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.birthday,
-                              expression: "employee.birthday"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "date" },
-                          domProps: { value: _vm.employee.birthday },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "birthday",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorReceptionDate))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Дата приема на работу:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.reception_date,
-                              expression: "employee.reception_date"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "date" },
-                          domProps: { value: _vm.employee.reception_date },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "reception_date",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorPosition))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Должность:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.employee.position_id,
-                                expression: "employee.position_id"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: [
-                                function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.employee,
-                                    "position_id",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                },
-                                _vm.onChange
-                              ]
-                            }
-                          },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { disabled: "", value: "" } },
-                              [_vm._v("Выберите должность")]
-                            ),
-                            _vm._v(" "),
-                            _vm._l(_vm.positions, function(pos) {
-                              return _c(
-                                "option",
-                                { domProps: { value: pos.id } },
-                                [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(pos.id) +
-                                      ". " +
-                                      _vm._s(pos.name_position) +
-                                      "\n                    "
-                                  )
-                                ]
-                              )
-                            })
-                          ],
-                          2
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorSalary))]
-                    ),
-                    _vm._v(" "),
                     _c("div", { staticClass: "row" }, [
-                      _vm._m(2),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group col-sm-9" }, [
-                        _c("div", { staticClass: "input-group" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.employee.salary,
-                                expression: "employee.salary"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "number",
-                              step: "0.01",
-                              value: "0.00",
-                              placeholder: "00,00"
-                            },
-                            domProps: { value: _vm.employee.salary },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  _vm.employee,
-                                  "salary",
-                                  $event.target.value
-                                )
-                              }
+                      _c("div", { staticClass: "col-12 col-sm-6 center" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            attrs: { for: "title" }
+                          },
+                          [_vm._v("Фото")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
                             }
+                          },
+                          [_vm._v(_vm._s(_vm.errorPhoto))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "cleanPhoto" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-secondary",
+                              attrs: {
+                                type: "button",
+                                "data-placement": "left",
+                                title: "Удалить фото"
+                              },
+                              on: { click: _vm.onFileDelete }
+                            },
+                            [
+                              _c("font-awesome-icon", {
+                                attrs: { icon: "times", size: "lg" }
+                              })
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("img", {
+                          staticClass:
+                            "rounded mx-auto d-block img-fluid img-thumbnail",
+                          attrs: { src: _vm.employee.photo, width: "200px" }
+                        }),
+                        _vm._v(" "),
+                        _c("sub", [
+                          _vm._v(
+                            "(*Ремомендация фото: 200х300px, размер файла не более 1МВ)"
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("br"),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "custom-file" }, [
+                          _c("input", {
+                            ref: "photo",
+                            staticClass: "custom-file-input",
+                            attrs: {
+                              type: "file",
+                              accept: "image/*",
+                              lang: "ru",
+                              multiple: ""
+                            },
+                            on: { change: _vm.onFileChange }
                           }),
                           _vm._v(" "),
-                          _vm._m(3)
+                          _c(
+                            "label",
+                            {
+                              staticClass: "file custom-file-label",
+                              attrs: { for: "customFile" }
+                            },
+                            [_vm._v("Выберите файл")]
+                          )
                         ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorHead))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Начальник:")
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
+                      _c("div", { staticClass: "col-12 col-sm-6" }, [
                         _c(
-                          "select",
+                          "label",
                           {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.employee.head,
-                                expression: "employee.head"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.$set(
-                                  _vm.employee,
-                                  "head",
-                                  $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                )
-                              }
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
                             }
                           },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { disabled: "", value: "" } },
-                              [_vm._v("Выберите начальника")]
-                            ),
-                            _vm._v(" "),
-                            _vm._l(_vm.heads, function(h) {
-                              return _c(
-                                "option",
-                                { domProps: { value: h.id } },
-                                [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(h.table_number) +
-                                      ": " +
-                                      _vm._s(h.nameWorker) +
-                                      " / " +
-                                      _vm._s(h.name_position) +
-                                      "\n                    "
+                          [_vm._v(_vm._s(_vm.errorSurname))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Фамилия:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.surname,
+                                  expression: "employee.surname"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                placeholder: "Введите фамилию"
+                              },
+                              domProps: { value: _vm.employee.surname },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "surname",
+                                    $event.target.value
                                   )
-                                ]
-                              )
+                                }
+                              }
                             })
-                          ],
-                          2
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(4)
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorName))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Имя:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.name,
+                                  expression: "employee.name"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                placeholder: "Введите имя"
+                              },
+                              domProps: { value: _vm.employee.name },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "name",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorPatronymic))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Отчество:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.patronymic,
+                                  expression: "employee.patronymic"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                placeholder: "Введите отчество"
+                              },
+                              domProps: { value: _vm.employee.patronymic },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "patronymic",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorBirthday))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("День рождение:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.birthday,
+                                  expression: "employee.birthday"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { type: "date" },
+                              domProps: { value: _vm.employee.birthday },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "birthday",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorReceptionDate))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Дата приема на работу:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.reception_date,
+                                  expression: "employee.reception_date"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { type: "date" },
+                              domProps: { value: _vm.employee.reception_date },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "reception_date",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorPosition))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Должность:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.employee.position_id,
+                                    expression: "employee.position_id"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                on: {
+                                  change: [
+                                    function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        _vm.employee,
+                                        "position_id",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      )
+                                    },
+                                    _vm.onChange
+                                  ]
+                                }
+                              },
+                              [
+                                _c(
+                                  "option",
+                                  { attrs: { disabled: "", value: "" } },
+                                  [_vm._v("Выберите должность")]
+                                ),
+                                _vm._v(" "),
+                                _vm._l(_vm.positions, function(pos) {
+                                  return _c(
+                                    "option",
+                                    { domProps: { value: pos.id } },
+                                    [
+                                      _vm._v(
+                                        "\n                          " +
+                                          _vm._s(pos.id) +
+                                          ". " +
+                                          _vm._s(pos.name_position) +
+                                          "\n                        "
+                                      )
+                                    ]
+                                  )
+                                })
+                              ],
+                              2
+                            )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorSalary))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _vm._m(2),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-sm-9" }, [
+                            _c("div", { staticClass: "input-group" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.employee.salary,
+                                    expression: "employee.salary"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  step: "0.01",
+                                  value: "0.00",
+                                  placeholder: "00,00"
+                                },
+                                domProps: { value: _vm.employee.salary },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.employee,
+                                      "salary",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm._m(3)
+                            ])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorHead))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Начальник:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.employee.head,
+                                    expression: "employee.head"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                on: {
+                                  change: function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.$set(
+                                      _vm.employee,
+                                      "head",
+                                      $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    )
+                                  }
+                                }
+                              },
+                              [
+                                _c(
+                                  "option",
+                                  { attrs: { disabled: "", value: "" } },
+                                  [_vm._v("Выберите начальника")]
+                                ),
+                                _vm._v(" "),
+                                _vm._l(_vm.heads, function(h) {
+                                  return _c(
+                                    "option",
+                                    { domProps: { value: h.id } },
+                                    [
+                                      _vm._v(
+                                        "\n                          " +
+                                          _vm._s(h.table_number) +
+                                          ": " +
+                                          _vm._s(h.nameWorker) +
+                                          " / " +
+                                          _vm._s(h.name_position) +
+                                          "\n                        "
+                                      )
+                                    ]
+                                  )
+                                })
+                              ],
+                              2
+                            )
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(4)
+                    ])
                   ]
                 )
               ])
@@ -49340,10 +49609,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-xs-12 form-group" }, [
-        _c("button", { staticClass: "btn btn-success" }, [_vm._v("Добавить")])
-      ])
+    return _c("div", { staticClass: "col-xs-12 form-group" }, [
+      _c("button", { staticClass: "btn btn-success" }, [_vm._v("Добавить")])
     ])
   }
 ]
@@ -49437,454 +49704,560 @@ var render = function() {
                     }
                   },
                   [
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorSurname))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Фамилия:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.surname,
-                              expression: "employee.surname"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Введите фамилию"
-                          },
-                          domProps: { value: _vm.employee.surname },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "surname",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorName))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Имя:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.name,
-                              expression: "employee.name"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", placeholder: "Введите имя" },
-                          domProps: { value: _vm.employee.name },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "name",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorPatronymic))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Отчество:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.patronymic,
-                              expression: "employee.patronymic"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Введите отчество"
-                          },
-                          domProps: { value: _vm.employee.patronymic },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "patronymic",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorBirthday))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("День рождение:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.birthday,
-                              expression: "employee.birthday"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "date" },
-                          domProps: { value: _vm.employee.birthday },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "birthday",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorReceptionDate))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Дата приема на работу:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.employee.reception_date,
-                              expression: "employee.reception_date"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "date" },
-                          domProps: { value: _vm.employee.reception_date },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.employee,
-                                "reception_date",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorPosition))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Должность:")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
-                        _c(
-                          "select",
-                          {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.employee.position_id,
-                                expression: "employee.position_id"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: [
-                                function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.employee,
-                                    "position_id",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                },
-                                _vm.onChange
-                              ]
-                            }
-                          },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { disabled: "", value: "" } },
-                              [_vm._v("Выберите должность")]
-                            ),
-                            _vm._v(" "),
-                            _vm._l(_vm.positions, function(pos) {
-                              return _c(
-                                "option",
-                                { domProps: { value: pos.id } },
-                                [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(pos.id) +
-                                      ". " +
-                                      _vm._s(pos.name_position) +
-                                      "\n                    "
-                                  )
-                                ]
-                              )
-                            })
-                          ],
-                          2
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorSalary))]
-                    ),
-                    _vm._v(" "),
                     _c("div", { staticClass: "row" }, [
-                      _vm._m(2),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group col-sm-9" }, [
-                        _c("div", { staticClass: "input-group" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.employee.salary,
-                                expression: "employee.salary"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "number",
-                              step: "0.01",
-                              value: "0.00",
-                              placeholder: "00,00"
-                            },
-                            domProps: { value: _vm.employee.salary },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  _vm.employee,
-                                  "salary",
-                                  $event.target.value
-                                )
-                              }
+                      _c("div", { staticClass: "col-12 col-sm-6 center" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            attrs: { for: "title" }
+                          },
+                          [_vm._v("Фото")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
                             }
+                          },
+                          [_vm._v(_vm._s(_vm.errorPhoto))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "cleanPhoto" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-secondary",
+                              attrs: {
+                                type: "button",
+                                "data-placement": "left",
+                                title: "Удалить фото"
+                              },
+                              on: { click: _vm.onFileDelete }
+                            },
+                            [
+                              _c("font-awesome-icon", {
+                                attrs: { icon: "times", size: "lg" }
+                              })
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("img", {
+                          staticClass:
+                            "rounded mx-auto d-block img-fluid img-thumbnail",
+                          attrs: { src: _vm.employee.photo, width: "200px" }
+                        }),
+                        _vm._v(" "),
+                        _c("sub", [
+                          _vm._v(
+                            "(*Ремомендация фото: 200х300px, размер файла не более 1МВ)"
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("br"),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "custom-file" }, [
+                          _c("input", {
+                            ref: "photo",
+                            staticClass: "custom-file-input",
+                            attrs: {
+                              type: "file",
+                              accept: "image/*",
+                              lang: "ru",
+                              multiple: ""
+                            },
+                            on: { change: _vm.onFileChange }
                           }),
                           _vm._v(" "),
-                          _vm._m(3)
+                          _c(
+                            "label",
+                            {
+                              staticClass: "file custom-file-label",
+                              attrs: { for: "customFile" }
+                            },
+                            [_vm._v("Выберите файл")]
+                          )
                         ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "label",
-                      {
-                        staticClass: "control-label",
-                        class: {
-                          hidden: _vm.isActive,
-                          "text-danger": _vm.hasError
-                        }
-                      },
-                      [_vm._v(_vm._s(_vm.errorHead))]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group row" }, [
-                      _c("label", { staticClass: "col-sm-3 col-form-label" }, [
-                        _vm._v("Начальник:")
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-9" }, [
+                      _c("div", { staticClass: "col-12 col-sm-6" }, [
                         _c(
-                          "select",
+                          "label",
                           {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.employee.head,
-                                expression: "employee.head"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            on: {
-                              change: function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.$set(
-                                  _vm.employee,
-                                  "head",
-                                  $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                )
-                              }
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
                             }
                           },
-                          [
-                            _c(
-                              "option",
-                              { attrs: { disabled: "", value: "" } },
-                              [_vm._v("Выберите начальника")]
-                            ),
-                            _vm._v(" "),
-                            _vm._l(_vm.heads, function(h) {
-                              return _c(
-                                "option",
-                                { domProps: { value: h.id } },
-                                [
-                                  _vm._v(
-                                    "\n                      " +
-                                      _vm._s(h.table_number) +
-                                      ": " +
-                                      _vm._s(h.nameWorker) +
-                                      " / " +
-                                      _vm._s(h.name_position) +
-                                      "\n                    "
+                          [_vm._v(_vm._s(_vm.errorSurname))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Фамилия:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.surname,
+                                  expression: "employee.surname"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                placeholder: "Введите фамилию"
+                              },
+                              domProps: { value: _vm.employee.surname },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "surname",
+                                    $event.target.value
                                   )
-                                ]
-                              )
+                                }
+                              }
                             })
-                          ],
-                          2
-                        )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorName))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Имя:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.name,
+                                  expression: "employee.name"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                placeholder: "Введите имя"
+                              },
+                              domProps: { value: _vm.employee.name },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "name",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorPatronymic))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Отчество:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.patronymic,
+                                  expression: "employee.patronymic"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                placeholder: "Введите отчество"
+                              },
+                              domProps: { value: _vm.employee.patronymic },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "patronymic",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorBirthday))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("День рождение:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.birthday,
+                                  expression: "employee.birthday"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { type: "date" },
+                              domProps: { value: _vm.employee.birthday },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "birthday",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorReceptionDate))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Дата приема на работу:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.employee.reception_date,
+                                  expression: "employee.reception_date"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { type: "date" },
+                              domProps: { value: _vm.employee.reception_date },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.employee,
+                                    "reception_date",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorPosition))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Должность:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.employee.position_id,
+                                    expression: "employee.position_id"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                on: {
+                                  change: [
+                                    function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        _vm.employee,
+                                        "position_id",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      )
+                                    },
+                                    _vm.onChange
+                                  ]
+                                }
+                              },
+                              [
+                                _c(
+                                  "option",
+                                  { attrs: { disabled: "", value: "" } },
+                                  [_vm._v("Выберите должность")]
+                                ),
+                                _vm._v(" "),
+                                _vm._l(_vm.positions, function(pos) {
+                                  return _c(
+                                    "option",
+                                    { domProps: { value: pos.id } },
+                                    [
+                                      _vm._v(
+                                        "\n                          " +
+                                          _vm._s(pos.id) +
+                                          ". " +
+                                          _vm._s(pos.name_position) +
+                                          "\n                        "
+                                      )
+                                    ]
+                                  )
+                                })
+                              ],
+                              2
+                            )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorSalary))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _vm._m(2),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-sm-9" }, [
+                            _c("div", { staticClass: "input-group" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.employee.salary,
+                                    expression: "employee.salary"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  step: "0.01",
+                                  value: "0.00",
+                                  placeholder: "00,00"
+                                },
+                                domProps: { value: _vm.employee.salary },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.employee,
+                                      "salary",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm._m(3)
+                            ])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "control-label",
+                            class: {
+                              hidden: _vm.isActive,
+                              "text-danger": _vm.hasError
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.errorHead))]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row" }, [
+                          _c(
+                            "label",
+                            { staticClass: "col-sm-3 col-form-label" },
+                            [_vm._v("Начальник:")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-9" }, [
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.employee.head,
+                                    expression: "employee.head"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                on: {
+                                  change: function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.$set(
+                                      _vm.employee,
+                                      "head",
+                                      $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    )
+                                  }
+                                }
+                              },
+                              [
+                                _c(
+                                  "option",
+                                  { attrs: { disabled: "", value: "" } },
+                                  [_vm._v("Выберите начальника")]
+                                ),
+                                _vm._v(" "),
+                                _vm._l(_vm.heads, function(h) {
+                                  return _c(
+                                    "option",
+                                    { domProps: { value: h.id } },
+                                    [
+                                      _vm._v(
+                                        "\n                          " +
+                                          _vm._s(h.table_number) +
+                                          ": " +
+                                          _vm._s(h.nameWorker) +
+                                          " / " +
+                                          _vm._s(h.name_position) +
+                                          "\n                        "
+                                      )
+                                    ]
+                                  )
+                                })
+                              ],
+                              2
+                            )
+                          ])
+                        ])
                       ])
                     ]),
                     _vm._v(" "),
@@ -50088,6 +50461,20 @@ var render = function() {
                   )
                 ]
               }
+            },
+            {
+              key: "photo",
+              fn: function(props) {
+                return [
+                  _c("img", {
+                    attrs: {
+                      src: props.cell_value,
+                      width: "70px",
+                      height: "105px"
+                    }
+                  })
+                ]
+              }
             }
           ])
         },
@@ -50150,7 +50537,23 @@ var render = function() {
                     config: _vm.config,
                     totalRows: _vm.total_rows
                   },
-                  on: { "on-change-query": _vm.onChangeQuery }
+                  on: { "on-change-query": _vm.onChangeQuery },
+                  scopedSlots: _vm._u([
+                    {
+                      key: "photo",
+                      fn: function(props) {
+                        return [
+                          _c("img", {
+                            attrs: {
+                              src: props.cell_value,
+                              width: "70px",
+                              height: "105px"
+                            }
+                          })
+                        ]
+                      }
+                    }
+                  ])
                 },
                 [
                   _c("template", { slot: "paginataion-previous-button" }, [
@@ -68369,6 +68772,7 @@ var ifAuthenticated = function ifAuthenticated(to, from, next) {
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__["faFolderPlus"]);
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__["faFolderMinus"]);
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__["faFolder"]);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__["faTimes"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_13__["FontAwesomeIcon"]);
 
 var routes = [{

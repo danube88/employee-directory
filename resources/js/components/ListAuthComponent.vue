@@ -24,6 +24,9 @@
           Delete
         </a>
     </template>
+    <template slot="photo" slot-scope="props">
+      <img v-bind:src="props.cell_value" width="70px" height="105px" />
+    </template>
     </vue-bootstrap4-table>
   </div>
 </template>
@@ -46,6 +49,13 @@ export default {
                     sort: true,
                     initial_sort: true,
                     initial_sort_order: "asc"
+                },
+                {
+                    label: "Фoto",
+                    name: "photo",
+                    sort: false,
+                    search: false,
+                    slot_name: "photo"
                 },
                 {
                     label: "ФИО",

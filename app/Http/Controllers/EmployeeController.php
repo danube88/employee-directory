@@ -10,6 +10,7 @@ use App\Position;
 use App\Worker;
 use App\Subordination;
 use Illuminate\Validation\Rule;
+use Image;
 
 class EmployeeController extends Controller
 {
@@ -32,6 +33,7 @@ class EmployeeController extends Controller
                 ->leftJoin('workers as ws', 'ws.id', '=', 's.head_id')
                 ->select([
                   "w.id",
+                  "w.photo",
                   "w.table_number",
                   DB::raw("DATE_FORMAT(w.birthday,'%m.%d.%Y') as birthday"),
                   DB::raw("CONCAT(w.surname,' ',w.name,' ',w.patronymic) as nameWorker"),
@@ -57,6 +59,14 @@ class EmployeeController extends Controller
               ->orderBy($sortName, $sortOrder);
       $workers = $workers->get();
 
+      foreach ($workers as $worker) {
+        if(($worker->photo != null)&&(file_exists(public_path()."/img/photo/mini/".$worker->photo))){
+          $worker->photo = "../img/photo/mini/".$worker->photo."?".rand();
+        } else {
+          $worker->photo = '../img/example_mini.jpg';
+        }
+      }
+
       return Response::json(array('data' => $workers->toArray(),'total' => $total));
     }
 
@@ -73,7 +83,8 @@ class EmployeeController extends Controller
           'birthday' => 'required|date|before_or_equal:'.date("Y-m-d").'',
           'position_id' => 'required|numeric',
           'salary' => 'required|numeric',
-          'reception_date' => 'required|date|before_or_equal:'.date("Y-m-d").''
+          'reception_date' => 'required|date|before_or_equal:'.date("Y-m-d").'',
+          'photo' => 'file|image|max:1024|mimes:jpeg,jpg,bmp,png'
       ];
       $validator = Validator::make($input, $rules);
       if ($validator->fails()) {
@@ -93,6 +104,24 @@ class EmployeeController extends Controller
           'salary' => $input['salary'],
           'reception_date' => $input['reception_date']
         ]);
+
+        if ($request->hasFile('photo')) {
+          $file = $request->file('photo');
+          $input['photo'] = $worker->id.'.'.$file->getClientOriginalExtension();
+
+          Image::make($file)->resize(200, 300)->save(public_path().'/img/photo/'.$input['photo'],100);
+
+          $img = Image::make(public_path().'/img/photo/'.$input['photo'])->resize(70, 105);
+          $img->save(public_path().'/img/photo/mini/'.$input['photo'],100);
+
+          Worker::find($worker->id)->update([
+            'photo' => $input['photo']
+          ]);
+        } else {
+          Worker::find($worker->id)->update([
+            'photo' => NULL
+          ]);
+        }
 
         if ($input['head'] != 0) {
           Subordination::create([
@@ -120,13 +149,18 @@ class EmployeeController extends Controller
                   ])
                 ->orderBy('workers.table_number', 'asc')
                 ->get()->toArray();
+      if(($worker->photo != null)&&(file_exists(public_path()."/img/photo/".$worker->photo))){
+        $worker->photo = "../../../img/photo/".$worker->photo."?".rand();
+      } else {
+        $worker->photo = "../../../img/example.jpg";
+      };
       return Response::json(array('data' => $worker,'head' => $head,'heads' => $heads));
     }
 
     public function update(Request $request, $id)
     {
       $input = $request->except('_token');
-
+      //return Response::json(array('data' => $input));
       $rules = [
           'head' => 'numeric',
           'table_number' => ['required','min:6','max:6',Rule::unique('workers')->ignore($id),],
@@ -136,14 +170,16 @@ class EmployeeController extends Controller
           'birthday' => 'required|date|before_or_equal:'.date("Y-m-d").'',
           'position_id' => 'required|numeric',
           'salary' => 'required|numeric',
-          'reception_date' => 'required|date|before_or_equal:'.date("Y-m-d").''
+          'reception_date' => 'required|date|before_or_equal:'.date("Y-m-d").'',
+          'photo' => 'file|image|max:1024|mimes:jpeg,jpg,bmp,png',
+          'photoDelete' => 'numeric'
       ];
       $validator = Validator::make($input, $rules);
       if ($validator->fails()) {
         return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
       } else {
         //$position = Position::where('id', '=', $input['position'])->first()->id;
-        $worker = Worker::find($id)->update([
+        $worker = Worker::where('id','=',$id)->update([
           'surname' => $input['surname'],
           'name' => $input['name'],
           'patronymic' => $input['patronymic'],
@@ -154,6 +190,20 @@ class EmployeeController extends Controller
           'reception_date' => $input['reception_date']
         ]);
 
+        if ($request->hasFile('photo')) {
+          $file = $request->file('photo');
+          $input['photo'] = $id.'.'.$file->getClientOriginalExtension();
+
+          Image::make($file)->resize(200, 300)->save(public_path().'/img/photo/'.$input['photo'],100);
+
+          $img = Image::make(public_path().'/img/photo/'.$input['photo'])->resize(70, 105);
+          $img->save(public_path().'/img/photo/mini/'.$input['photo'],100);
+
+          Worker::where('id','=',$id)->update([
+            'photo' => $input['photo']
+          ]);
+        }
+
         if ($input['head'] != 0) {
           $subordination = Subordination::updateOrCreate(
             ['subordinate_id' => $id],
@@ -161,6 +211,19 @@ class EmployeeController extends Controller
           );
         } else {
           Subordination::where('subordinate_id','=',$id)->delete();
+        }
+
+        $worker = Worker::where('id','=',$id)->first();
+        if ($input['photoDelete'] != 0 && $worker->photo != null) {
+          if(file_exists(public_path().'/img/photo/mini/'.$worker->photo)){
+            unlink(public_path().'/img/photo/mini/'.$worker->photo);
+          }
+          if(file_exists(public_path().'/img/photo/'.$worker->photo)){
+            unlink(public_path().'/img/photo/'.$worker->photo);
+          }
+          Worker::where('id','=',$id)->update([
+            'photo' => NULL
+          ]);
         }
 
         return Response::json(['data'=>'Карточка сотрудника №'.$input['table_number'].' изменена']);

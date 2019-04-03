@@ -29,6 +29,7 @@ class ListController extends Controller
                 ->leftJoin('workers as ws', 'ws.id', '=', 's.head_id')
                 ->select([
                   "w.id",
+                  "w.photo",
                   "w.table_number",
                   DB::raw("DATE_FORMAT(w.birthday,'%m.%d.%Y') as birthday"),
                   DB::raw("CONCAT(w.surname,' ',w.name,' ',w.patronymic) as nameWorker"),
@@ -52,7 +53,15 @@ class ListController extends Controller
       $workers->offset(($request->page - 1) * $param->per_page)
               ->limit($param->per_page)
               ->orderBy($sortName, $sortOrder);
-        $workers = $workers->get();
+      $workers = $workers->get();
+
+      foreach ($workers as $worker) {
+        if(($worker->photo != null) && (file_exists(public_path()."/img/photo/mini/".$worker->photo))){
+          $worker->photo = "../img/photo/mini/".$worker->photo."?".rand();
+        } else {
+          $worker->photo = '../img/example_mini.jpg';
+        }
+      }
 
       return Response::json(array('data' => $workers->toArray(),'total' => $total));
     }

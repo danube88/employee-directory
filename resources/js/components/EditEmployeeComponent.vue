@@ -27,78 +27,98 @@
             </div>
             <div class="card-body">
               <form v-on:submit="saveForm()">
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorSurname }}</label>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">Фамилия:</label>
-                  <div class="col-sm-9">
-                    <input type="text" v-model="employee.surname" class="form-control" placeholder="Введите фамилию" />
-                  </div>
-                </div>
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorName }}</label>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">Имя:</label>
-                  <div class="col-sm-9">
-                    <input type="text" v-model="employee.name" class="form-control" placeholder="Введите имя" />
-                  </div>
-                </div>
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorPatronymic }}</label>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">Отчество:</label>
-                  <div class="col-sm-9">
-                    <input type="text" v-model="employee.patronymic" class="form-control" placeholder="Введите отчество" />
-                  </div>
-                </div>
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorBirthday }}</label>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">День рождение:</label>
-                  <div class="col-sm-9">
-                    <input type="date" v-model="employee.birthday" class="form-control" />
-                  </div>
-                </div>
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorReceptionDate }}</label>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">Дата приема на работу:</label>
-                  <div class="col-sm-9">
-                    <input type="date" v-model="employee.reception_date" class="form-control" />
-                  </div>
-                </div>
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorPosition }}</label>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">Должность:</label>
-                  <div class="col-sm-9">
-                    <select class="form-control" v-model="employee.position_id" @change="onChange">
-                      <option disabled value="">Выберите должность</option>
-                      <option v-for="pos in positions" v-bind:value="pos.id">
-                        {{ pos.id }}. {{ pos.name_position }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorSalary }}</label>
                 <div class="row">
-                  <div class="form-group col-sm-3">
-                    <label class="col-form-label">Размер заработной платы:</label>
-                  </div>
-                  <div class="form-group col-sm-9">
-                    <div class="input-group">
-                      <input type="number" v-model="employee.salary" class="form-control" step="0.01" value="0.00" placeholder="00,00" />
-                      <div class="input-group-append">
-                        <span class="input-group-text">&#8381;</span>
-                        <span class="input-group-text">0,00</span>
-                      </div>
+                  <div class="col-12 col-sm-6 center">
+                    <label class="control-label" for="title">Фото</label>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorPhoto }}</label>
+                    <div class="cleanPhoto">
+                      <button type="button" v-on:click="onFileDelete" class="btn btn-secondary" data-placement="left" title="Удалить фото">
+                        <font-awesome-icon icon="times" size="lg"/>
+                      </button>
+                    </div>
+                    <img :src="employee.photo" width="200px" class="rounded mx-auto d-block img-fluid img-thumbnail"/>
+                    <sub>(*Ремомендация фото: 200х300px, размер файла не более 1МВ)</sub>
+                    <br/><br/>
+                    <div class="custom-file">
+                      <input ref="photo" type="file" @change="onFileChange" class="custom-file-input" accept="image/*" lang="ru" multiple />
+                      <label class="file custom-file-label" for="customFile">Выберите файл</label>
                     </div>
                   </div>
-                </div>
-                <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorHead }}</label>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">Начальник:</label>
-                  <div class="col-sm-9">
-                    <select class="form-control" v-model="employee.head">
-                      <option disabled value="">Выберите начальника</option>
-                      <option v-for="h in heads" v-bind:value="h.id">
-                        {{ h.table_number }}: {{ h.nameWorker }} / {{ h.name_position }}
-                      </option>
-                    </select>
+                  <div class="col-12 col-sm-6">
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorSurname }}</label>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Фамилия:</label>
+                      <div class="col-sm-9">
+                        <input type="text" v-model="employee.surname" class="form-control" placeholder="Введите фамилию" />
+                      </div>
+                    </div>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorName }}</label>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Имя:</label>
+                      <div class="col-sm-9">
+                        <input type="text" v-model="employee.name" class="form-control" placeholder="Введите имя" />
+                      </div>
+                    </div>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorPatronymic }}</label>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Отчество:</label>
+                      <div class="col-sm-9">
+                        <input type="text" v-model="employee.patronymic" class="form-control" placeholder="Введите отчество" />
+                      </div>
+                    </div>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorBirthday }}</label>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">День рождение:</label>
+                      <div class="col-sm-9">
+                        <input type="date" v-model="employee.birthday" class="form-control" />
+                      </div>
+                    </div>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorReceptionDate }}</label>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Дата приема на работу:</label>
+                      <div class="col-sm-9">
+                        <input type="date" v-model="employee.reception_date" class="form-control" />
+                      </div>
+                    </div>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorPosition }}</label>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Должность:</label>
+                      <div class="col-sm-9">
+                        <select class="form-control" v-model="employee.position_id" @change="onChange">
+                          <option disabled value="">Выберите должность</option>
+                          <option v-for="pos in positions" v-bind:value="pos.id">
+                            {{ pos.id }}. {{ pos.name_position }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorSalary }}</label>
+                    <div class="row">
+                      <div class="form-group col-sm-3">
+                        <label class="col-form-label">Размер заработной платы:</label>
+                      </div>
+                      <div class="form-group col-sm-9">
+                        <div class="input-group">
+                          <input type="number" v-model="employee.salary" class="form-control" step="0.01" value="0.00" placeholder="00,00" />
+                          <div class="input-group-append">
+                            <span class="input-group-text">&#8381;</span>
+                            <span class="input-group-text">0,00</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorHead }}</label>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Начальник:</label>
+                      <div class="col-sm-9">
+                        <select class="form-control" v-model="employee.head">
+                          <option disabled value="">Выберите начальника</option>
+                          <option v-for="h in heads" v-bind:value="h.id">
+                            {{ h.table_number }}: {{ h.nameWorker }} / {{ h.name_position }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="row">
@@ -122,6 +142,7 @@
       return {
         employee: {
           head: '',
+          photo: '',
           table_number: '',
           surname: '',
           name: '',
@@ -131,6 +152,7 @@
           salary: '',
           reception_date: '',
         },
+        photoDel: '',
         positions: [],
         heads: [],
         employeeId: null,
@@ -145,6 +167,7 @@
         errorPosition: '',
         errorHead: '',
         errorTableNumber: '',
+        errorPhoto: '',
       };
     },
     components: {
@@ -153,6 +176,7 @@
     mounted() {
       let app = this;
       let id = app.$route.params.id;
+      app.photoDel = 0;
       app.dataPositions();
       axios.get('/api/employee/data/edit/' + id)
       .then(function (resp) {
@@ -207,17 +231,38 @@
         app.errorPosition = '';
         app.errorHead = '';
         app.errorTableNumber = '';
+        app.errorPhoto = '';
 
-        var data = app.employee;
         let id = app.$route.params.id;
+        var files = app.$refs.photo.files;
+        var data = new FormData();
+        data.append('_method', 'PUT');
+        data.append('head', app.employee.head);
+        data.append('table_number', app.employee.table_number);
+        data.append('surname', app.employee.surname);
+        data.append('name', app.employee.name);
+        data.append('patronymic', app.employee.patronymic);
+        data.append('birthday', app.employee.birthday);
+        data.append('position_id', app.employee.position_id);
+        data.append('salary', app.employee.salary);
+        data.append('reception_date', app.employee.reception_date);
+        if (files[0]) {
+          data.append('photo', files[0]);
+        }
+        data.append('photoDelete', app.photoDel);
 
-        axios.put('/api/employee/data/update/' + id, data)
+        axios.post('/api/employee/data/update/' + id, data)
           .then(function (resp) {
             if(resp.data.errors){
               if(resp.data.errors.table_number){
                 app.isActive = false;
                 app.hasError = true;
                 app.errorTableNumber = resp.data.errors.table_number[0];
+              }
+              if(resp.data.errors.photo){
+                app.isActive = false;
+                app.hasError = true;
+                app.errorPhoto = resp.data.errors.photo[0];
               }
               if(resp.data.errors.name){
                 app.isActive = false;
@@ -268,6 +313,37 @@
             console.log(resp);
             alert("Could not update your employee");
           });
+      },
+      onFileChange() {
+        var files = this.$refs.photo.files;
+        var app = this;
+        if (files && files[0]) {
+          if(files[0].type.match('image.*')){
+            if(files[0].size > 1048576){
+              alert('The file size is more than 1 MB');
+              this.$refs.photo.value = null;
+            } else {
+              alert('Good image file');
+
+              var reader = new FileReader();
+
+              reader.onload = function (e) {
+                app.employee.photo = e.target.result;
+                app.photoDel = 0;
+              }
+
+              reader.readAsDataURL(files[0]);
+            }
+          } else {
+            alert('Not image');
+            this.$refs.photo.value = null;
+          }
+        }
+      },
+      onFileDelete(){
+        this.employee.photo = '../../../img/example.jpg';
+        this.$refs.photo.value = null;
+        this.photoDel = 1;
       }
     }
   }

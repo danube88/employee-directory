@@ -31,11 +31,12 @@ import EditEmployee from './../components/EditEmployeeComponent.vue';
 import AppComponent from './../components/AppComponent.vue';
 import ListComponent from './../components/ListComponent.vue';
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFolderPlus,faFolderMinus,faFolder } from '@fortawesome/free-solid-svg-icons'
+import { faFolderPlus,faFolderMinus,faFolder,faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faFolderPlus)
 library.add(faFolderMinus)
 library.add(faFolder)
+library.add(faTimes)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
