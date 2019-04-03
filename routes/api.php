@@ -26,3 +26,4 @@ Route::post('/employee/data/create','EmployeeController@store')->middleware('aut
 Route::get('/employee/data/edit/{id}','EmployeeController@show')->middleware('auth:api');
 Route::put('/employee/data/update/{id}','EmployeeController@update')->middleware('auth:api');
 Route::delete('/employee/data/delete/{id}','EmployeeController@destroy')->middleware('auth:api');
+Route::get('/hierarchy/data/tree/{id}','HierarchyController@dataLoading');

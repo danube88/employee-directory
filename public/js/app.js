@@ -11209,6 +11209,42 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/AppAuthComponent.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/AppAuthComponent.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _layout_navbarAuth_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./layout/navbarAuth.vue */ "./resources/js/components/layout/navbarAuth.vue");
+/* harmony import */ var _HierarchyComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./HierarchyComponent.vue */ "./resources/js/components/HierarchyComponent.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    HierarchyComponent: _HierarchyComponent_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    NavbarComponent: _layout_navbarAuth_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/AppComponent.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/AppComponent.vue?vue&type=script&lang=js& ***!
@@ -11426,6 +11462,7 @@ __webpack_require__.r(__webpack_exports__);
     NavbarAuthComponent: _layout_navbarAuth_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   mounted: function mounted() {
+    this.employee.head = 0;
     this.dataPositions();
   },
   methods: {
@@ -11447,7 +11484,7 @@ __webpack_require__.r(__webpack_exports__);
           "table_number": app.employee.table_number
         }
       }).then(function (resp) {
-        app.employee.head = '';
+        app.employee.head = 0;
         app.heads = resp.data;
       }).catch(function (error) {
         console.log(error);
@@ -12347,12 +12384,23 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     isFolder: function isFolder() {
-      return this.item.children && this.item.children.length;
+      return this.item.children && this.item.count > 0;
     }
   },
   methods: {
     toggle: function toggle() {
+      var app = this;
+
       if (this.isFolder) {
+        if (this.$children.length == 0 && this.item.count != 0) {
+          var id = this.item.id;
+          axios.get('/api/hierarchy/data/tree/' + id).then(function (resp) {
+            app.item.children = [resp.data];
+          }).catch(function (resp) {
+            console.log(resp);
+          });
+        }
+
         this.isOpen = !this.isOpen;
       }
     }
@@ -12743,6 +12791,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -48863,6 +48914,49 @@ function baseFindIndex(e,t,n,r){for(var a=e.length,i=n+(r?1:-1);r?i--:++i<a;)if(
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/AppAuthComponent.vue?vue&type=template&id=bd285002&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/AppAuthComponent.vue?vue&type=template&id=bd285002& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("navbar-component"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row" }, [
+          _c(
+            "div",
+            { staticClass: "col-md-12" },
+            [_c("hierarchy-component")],
+            1
+          )
+        ])
+      ])
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/AppComponent.vue?vue&type=template&id=cd268472&":
 /*!***************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/AppComponent.vue?vue&type=template&id=cd268472& ***!
@@ -51632,6 +51726,19 @@ var render = function() {
                     [
                       _c("a", { staticClass: "nav-link" }, [
                         _vm._v("Список сотрудников")
+                      ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "router-link",
+                    {
+                      staticClass: "nav-item",
+                      attrs: { tag: "li", to: "/home/hierarchy" }
+                    },
+                    [
+                      _c("a", { staticClass: "nav-link" }, [
+                        _vm._v("Иерархия сотрудников")
                       ])
                     ]
                   )
@@ -67572,6 +67679,75 @@ if (bearer) {
 
 /***/ }),
 
+/***/ "./resources/js/components/AppAuthComponent.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/AppAuthComponent.vue ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _AppAuthComponent_vue_vue_type_template_id_bd285002___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AppAuthComponent.vue?vue&type=template&id=bd285002& */ "./resources/js/components/AppAuthComponent.vue?vue&type=template&id=bd285002&");
+/* harmony import */ var _AppAuthComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AppAuthComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/AppAuthComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _AppAuthComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AppAuthComponent_vue_vue_type_template_id_bd285002___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AppAuthComponent_vue_vue_type_template_id_bd285002___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/AppAuthComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/AppAuthComponent.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/AppAuthComponent.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AppAuthComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./AppAuthComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/AppAuthComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AppAuthComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/AppAuthComponent.vue?vue&type=template&id=bd285002&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/AppAuthComponent.vue?vue&type=template&id=bd285002& ***!
+  \*************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AppAuthComponent_vue_vue_type_template_id_bd285002___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./AppAuthComponent.vue?vue&type=template&id=bd285002& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/AppAuthComponent.vue?vue&type=template&id=bd285002&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AppAuthComponent_vue_vue_type_template_id_bd285002___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AppAuthComponent_vue_vue_type_template_id_bd285002___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/AppComponent.vue":
 /*!**************************************************!*\
   !*** ./resources/js/components/AppComponent.vue ***!
@@ -68734,7 +68910,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "./node_modules/@fortawesome/fontawesome-svg-core/index.es.js");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
 /* harmony import */ var _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @fortawesome/vue-fontawesome */ "./node_modules/@fortawesome/vue-fontawesome/index.es.js");
-/* harmony import */ var _components_layout_layout_vue__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./../components/layout/layout.vue */ "./resources/js/components/layout/layout.vue");
+/* harmony import */ var _components_AppAuthComponent_vue__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./../components/AppAuthComponent.vue */ "./resources/js/components/AppAuthComponent.vue");
+/* harmony import */ var _components_layout_layout_vue__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./../components/layout/layout.vue */ "./resources/js/components/layout/layout.vue");
 
 
 
@@ -68773,6 +68950,7 @@ _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__["faFolderMinus"]);
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__["faFolder"]);
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_11__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__["faTimes"]);
+
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_13__["FontAwesomeIcon"]);
 
 var routes = [{
@@ -68814,7 +68992,7 @@ var routes = [{
 }, {
   path: '/home',
   name: 'home',
-  component: _components_layout_layout_vue__WEBPACK_IMPORTED_MODULE_14__["default"],
+  component: _components_layout_layout_vue__WEBPACK_IMPORTED_MODULE_15__["default"],
   beforeEnter: ifAuthenticated
 }, {
   path: '/home/employee/create',
@@ -68825,6 +69003,11 @@ var routes = [{
   path: '/home/employee/edit/:id',
   component: _components_EditEmployeeComponent_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
   name: 'editEmployee',
+  beforeEnter: ifAuthenticated
+}, {
+  path: '/home/hierarchy',
+  component: _components_AppAuthComponent_vue__WEBPACK_IMPORTED_MODULE_14__["default"],
+  name: 'HomeHierarchy',
   beforeEnter: ifAuthenticated
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({

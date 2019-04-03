@@ -13,6 +13,9 @@
           <router-link tag="li" to="/home" class="nav-item">
             <a class="nav-link">Список сотрудников</a>
           </router-link>
+          <router-link tag="li" to="/home/hierarchy" class="nav-item">
+            <a class="nav-link">Иерархия сотрудников</a>
+          </router-link>
         </ul>
         <!-- Right Side Of Navbar -->
         <ul class="navbar-nav ml-auto">

@@ -170,6 +170,7 @@
       NavbarAuthComponent
     },
     mounted() {
+      this.employee.head = 0;
       this.dataPositions();
     },
     methods : {
@@ -194,7 +195,7 @@
           }
         })
         .then( function(resp) {
-          app.employee.head = '';
+          app.employee.head = 0;
           app.heads = resp.data;
         })
         .catch(function(error) {

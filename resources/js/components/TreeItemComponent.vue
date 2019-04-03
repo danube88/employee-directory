@@ -37,12 +37,23 @@
     computed: {
       isFolder: function () {
         return this.item.children &&
-          this.item.children.length
+          this.item.count > 0
       }
     },
     methods: {
       toggle: function () {
+        var app = this;
         if (this.isFolder) {
+          if(this.$children.length == 0 && this.item.count != 0) {
+            var id = this.item.id;
+            axios.get('/api/hierarchy/data/tree/' + id)
+              .then(function (resp) {
+                app.item.children = [resp.data];
+            })
+              .catch(function (resp) {
+                console.log(resp);
+            });
+          }
           this.isOpen = !this.isOpen
         }
       }

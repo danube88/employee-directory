@@ -38,6 +38,8 @@ library.add(faFolderMinus)
 library.add(faFolder)
 library.add(faTimes)
 
+import Hierarchy from './../components/AppAuthComponent.vue';
+
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 import HomeLayout from './../components/layout/layout.vue';
@@ -102,6 +104,12 @@ const routes = [
         path: '/home/employee/edit/:id',
         component: EditEmployee,
         name: 'editEmployee',
+        beforeEnter: ifAuthenticated,
+      },
+      {
+        path: '/home/hierarchy',
+        component: Hierarchy,
+        name: 'HomeHierarchy',
         beforeEnter: ifAuthenticated,
       },
      ]
