@@ -11426,6 +11426,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -11455,7 +11469,8 @@ __webpack_require__.r(__webpack_exports__);
       errorPosition: '',
       errorHead: '',
       errorTableNumber: '',
-      errorPhoto: ''
+      errorPhoto: '',
+      photoDel: ''
     };
   },
   components: {
@@ -11463,6 +11478,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.employee.head = 0;
+    this.photoDel = 0;
     this.dataPositions();
   },
   methods: {
@@ -11515,7 +11531,12 @@ __webpack_require__.r(__webpack_exports__);
       data.append('position_id', app.employee.position_id);
       data.append('salary', app.employee.salary);
       data.append('reception_date', app.employee.reception_date);
-      data.append('photo', files[0]);
+
+      if (files[0]) {
+        data.append('photo', files[0]);
+      }
+
+      data.append('photoDelete', app.photoDel);
       axios.post('/api/employee/data/create', data).then(function (resp) {
         if (resp.data.errors) {
           if (resp.data.errors.table_number) {
@@ -11603,6 +11624,7 @@ __webpack_require__.r(__webpack_exports__);
 
             reader.onload = function (e) {
               app.employee.photo = e.target.result;
+              app.photoDel = 0;
             };
 
             reader.readAsDataURL(files[0]);
@@ -11616,6 +11638,14 @@ __webpack_require__.r(__webpack_exports__);
     onFileDelete: function onFileDelete() {
       this.employee.photo = '../../img/example.jpg';
       this.$refs.photo.value = null;
+      this.photoDel = 1;
+    },
+    onCleanHead: function onCleanHead() {
+      this.employee.head = 0;
+    },
+    onCleanPosition: function onCleanPosition() {
+      this.employee.position_id = '';
+      this.employee.salary = '00,00';
     }
   }
 });
@@ -11632,6 +11662,18 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _layout_navbarAuth_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./layout/navbarAuth.vue */ "./resources/js/components/layout/navbarAuth.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -11808,12 +11850,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var app = this;
+    app.employee.head = 0;
     var id = app.$route.params.id;
     app.photoDel = 0;
     app.dataPositions();
     axios.get('/api/employee/data/edit/' + id).then(function (resp) {
       app.employee = resp.data.data;
-      app.employee.head = resp.data.head ? resp.data.head.head_id : '';
+      app.employee.head = resp.data.head ? resp.data.head.head_id : 0;
       app.heads = resp.data.heads;
     }).catch(function () {
       alert("Could not load your employee");
@@ -11838,7 +11881,7 @@ __webpack_require__.r(__webpack_exports__);
           "table_number": app.employee.table_number
         }
       }).then(function (resp) {
-        app.employee.head = '';
+        app.employee.head = 0;
         app.heads = resp.data;
       }).catch(function (error) {
         console.log(error);
@@ -11980,6 +12023,13 @@ __webpack_require__.r(__webpack_exports__);
       this.employee.photo = '../../../img/example.jpg';
       this.$refs.photo.value = null;
       this.photoDel = 1;
+    },
+    onCleanHead: function onCleanHead() {
+      this.employee.head = 0;
+    },
+    onCleanPosition: function onCleanPosition() {
+      this.employee.position_id = '';
+      this.employee.salary = '00,00';
     }
   }
 });
@@ -49437,69 +49487,92 @@ var render = function() {
                           ),
                           _vm._v(" "),
                           _c("div", { staticClass: "col-sm-9" }, [
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.employee.position_id,
-                                    expression: "employee.position_id"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                on: {
-                                  change: [
-                                    function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.employee,
-                                        "position_id",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    },
-                                    _vm.onChange
-                                  ]
-                                }
-                              },
-                              [
-                                _c(
-                                  "option",
-                                  { attrs: { disabled: "", value: "" } },
-                                  [_vm._v("Выберите должность")]
-                                ),
-                                _vm._v(" "),
-                                _vm._l(_vm.positions, function(pos) {
-                                  return _c(
-                                    "option",
-                                    { domProps: { value: pos.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                          " +
-                                          _vm._s(pos.id) +
-                                          ". " +
-                                          _vm._s(pos.name_position) +
-                                          "\n                        "
-                                      )
+                            _c("div", { staticClass: "input-group" }, [
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.employee.position_id,
+                                      expression: "employee.position_id"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.$set(
+                                          _vm.employee,
+                                          "position_id",
+                                          $event.target.multiple
+                                            ? $$selectedVal
+                                            : $$selectedVal[0]
+                                        )
+                                      },
+                                      _vm.onChange
                                     ]
-                                  )
-                                })
-                              ],
-                              2
-                            )
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "option",
+                                    { attrs: { disabled: "", value: "" } },
+                                    [_vm._v("Выберите должность")]
+                                  ),
+                                  _vm._v(" "),
+                                  _vm._l(_vm.positions, function(pos) {
+                                    return _c(
+                                      "option",
+                                      { domProps: { value: pos.id } },
+                                      [
+                                        _vm._v(
+                                          "\n                            " +
+                                            _vm._s(pos.id) +
+                                            ". " +
+                                            _vm._s(pos.name_position) +
+                                            "\n                          "
+                                        )
+                                      ]
+                                    )
+                                  })
+                                ],
+                                2
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "input-group-append" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-secondary",
+                                    attrs: {
+                                      type: "button",
+                                      "data-placement": "left",
+                                      title: "Очистить поле"
+                                    },
+                                    on: { click: _vm.onCleanPosition }
+                                  },
+                                  [
+                                    _c("font-awesome-icon", {
+                                      attrs: { icon: "times", size: "lg" }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
                           ])
                         ]),
                         _vm._v(" "),
@@ -49576,66 +49649,91 @@ var render = function() {
                           ),
                           _vm._v(" "),
                           _c("div", { staticClass: "col-sm-9" }, [
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.employee.head,
-                                    expression: "employee.head"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.employee,
-                                      "head",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              [
-                                _c(
-                                  "option",
-                                  { attrs: { disabled: "", value: "" } },
-                                  [_vm._v("Выберите начальника")]
-                                ),
-                                _vm._v(" "),
-                                _vm._l(_vm.heads, function(h) {
-                                  return _c(
-                                    "option",
-                                    { domProps: { value: h.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                          " +
-                                          _vm._s(h.table_number) +
-                                          ": " +
-                                          _vm._s(h.nameWorker) +
-                                          " / " +
-                                          _vm._s(h.name_position) +
-                                          "\n                        "
+                            _c("div", { staticClass: "input-group" }, [
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.employee.head,
+                                      expression: "employee.head"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  on: {
+                                    change: function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        _vm.employee,
+                                        "head",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
                                       )
-                                    ]
-                                  )
-                                })
-                              ],
-                              2
-                            )
+                                    }
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "option",
+                                    { attrs: { disabled: "", value: "" } },
+                                    [_vm._v("Выберите начальника")]
+                                  ),
+                                  _vm._v(" "),
+                                  _vm._l(_vm.heads, function(h) {
+                                    return _c(
+                                      "option",
+                                      { domProps: { value: h.id } },
+                                      [
+                                        _vm._v(
+                                          "\n                            " +
+                                            _vm._s(h.table_number) +
+                                            ": " +
+                                            _vm._s(h.nameWorker) +
+                                            " / " +
+                                            _vm._s(h.name_position) +
+                                            "\n                          "
+                                        )
+                                      ]
+                                    )
+                                  })
+                                ],
+                                2
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "input-group-append" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-secondary",
+                                    attrs: {
+                                      type: "button",
+                                      "data-placement": "left",
+                                      title: "Очистить поле"
+                                    },
+                                    on: { click: _vm.onCleanHead }
+                                  },
+                                  [
+                                    _c("font-awesome-icon", {
+                                      attrs: { icon: "times", size: "lg" }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
                           ])
                         ])
                       ]),
@@ -50151,69 +50249,92 @@ var render = function() {
                           ),
                           _vm._v(" "),
                           _c("div", { staticClass: "col-sm-9" }, [
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.employee.position_id,
-                                    expression: "employee.position_id"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                on: {
-                                  change: [
-                                    function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.$set(
-                                        _vm.employee,
-                                        "position_id",
-                                        $event.target.multiple
-                                          ? $$selectedVal
-                                          : $$selectedVal[0]
-                                      )
-                                    },
-                                    _vm.onChange
-                                  ]
-                                }
-                              },
-                              [
-                                _c(
-                                  "option",
-                                  { attrs: { disabled: "", value: "" } },
-                                  [_vm._v("Выберите должность")]
-                                ),
-                                _vm._v(" "),
-                                _vm._l(_vm.positions, function(pos) {
-                                  return _c(
-                                    "option",
-                                    { domProps: { value: pos.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                          " +
-                                          _vm._s(pos.id) +
-                                          ". " +
-                                          _vm._s(pos.name_position) +
-                                          "\n                        "
-                                      )
+                            _c("div", { staticClass: "input-group" }, [
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.employee.position_id,
+                                      expression: "employee.position_id"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.$set(
+                                          _vm.employee,
+                                          "position_id",
+                                          $event.target.multiple
+                                            ? $$selectedVal
+                                            : $$selectedVal[0]
+                                        )
+                                      },
+                                      _vm.onChange
                                     ]
-                                  )
-                                })
-                              ],
-                              2
-                            )
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "option",
+                                    { attrs: { disabled: "", value: "" } },
+                                    [_vm._v("Выберите должность")]
+                                  ),
+                                  _vm._v(" "),
+                                  _vm._l(_vm.positions, function(pos) {
+                                    return _c(
+                                      "option",
+                                      { domProps: { value: pos.id } },
+                                      [
+                                        _vm._v(
+                                          "\n                            " +
+                                            _vm._s(pos.id) +
+                                            ". " +
+                                            _vm._s(pos.name_position) +
+                                            "\n                          "
+                                        )
+                                      ]
+                                    )
+                                  })
+                                ],
+                                2
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "input-group-append" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-secondary",
+                                    attrs: {
+                                      type: "button",
+                                      "data-placement": "left",
+                                      title: "Очистить поле"
+                                    },
+                                    on: { click: _vm.onCleanPosition }
+                                  },
+                                  [
+                                    _c("font-awesome-icon", {
+                                      attrs: { icon: "times", size: "lg" }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
                           ])
                         ]),
                         _vm._v(" "),
@@ -50290,72 +50411,97 @@ var render = function() {
                           ),
                           _vm._v(" "),
                           _c("div", { staticClass: "col-sm-9" }, [
-                            _c(
-                              "select",
-                              {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.employee.head,
-                                    expression: "employee.head"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                on: {
-                                  change: function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.$set(
-                                      _vm.employee,
-                                      "head",
-                                      $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    )
-                                  }
-                                }
-                              },
-                              [
-                                _c(
-                                  "option",
-                                  { attrs: { disabled: "", value: "" } },
-                                  [_vm._v("Выберите начальника")]
-                                ),
-                                _vm._v(" "),
-                                _vm._l(_vm.heads, function(h) {
-                                  return _c(
-                                    "option",
-                                    { domProps: { value: h.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                          " +
-                                          _vm._s(h.table_number) +
-                                          ": " +
-                                          _vm._s(h.nameWorker) +
-                                          " / " +
-                                          _vm._s(h.name_position) +
-                                          "\n                        "
+                            _c("div", { staticClass: "input-group" }, [
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.employee.head,
+                                      expression: "employee.head"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  on: {
+                                    change: function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        _vm.employee,
+                                        "head",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
                                       )
-                                    ]
-                                  )
-                                })
-                              ],
-                              2
-                            )
+                                    }
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "option",
+                                    { attrs: { disabled: "", value: "" } },
+                                    [_vm._v("Выберите начальника")]
+                                  ),
+                                  _vm._v(" "),
+                                  _vm._l(_vm.heads, function(h) {
+                                    return _c(
+                                      "option",
+                                      { domProps: { value: h.id } },
+                                      [
+                                        _vm._v(
+                                          "\n                            " +
+                                            _vm._s(h.table_number) +
+                                            ": " +
+                                            _vm._s(h.nameWorker) +
+                                            " / " +
+                                            _vm._s(h.name_position) +
+                                            "\n                          "
+                                        )
+                                      ]
+                                    )
+                                  })
+                                ],
+                                2
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "input-group-append" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-secondary",
+                                    attrs: {
+                                      type: "button",
+                                      "data-placement": "left",
+                                      title: "Очистить поле"
+                                    },
+                                    on: { click: _vm.onCleanHead }
+                                  },
+                                  [
+                                    _c("font-awesome-icon", {
+                                      attrs: { icon: "times", size: "lg" }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ])
                           ])
                         ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(4)
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(4)
+                    ])
                   ]
                 )
               ])
@@ -50417,10 +50563,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-xs-12 form-group" }, [
-        _c("button", { staticClass: "btn btn-success" }, [_vm._v("Изменить")])
-      ])
+    return _c("div", { staticClass: "col-xs-12 form-group" }, [
+      _c("button", { staticClass: "btn btn-success" }, [_vm._v("Изменить")])
     ])
   }
 ]

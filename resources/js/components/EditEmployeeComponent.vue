@@ -84,12 +84,19 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Должность:</label>
                       <div class="col-sm-9">
-                        <select class="form-control" v-model="employee.position_id" @change="onChange">
-                          <option disabled value="">Выберите должность</option>
-                          <option v-for="pos in positions" v-bind:value="pos.id">
-                            {{ pos.id }}. {{ pos.name_position }}
-                          </option>
-                        </select>
+                        <div class="input-group">
+                          <select class="form-control" v-model="employee.position_id" @change="onChange">
+                            <option disabled value="">Выберите должность</option>
+                            <option v-for="pos in positions" v-bind:value="pos.id">
+                              {{ pos.id }}. {{ pos.name_position }}
+                            </option>
+                          </select>
+                          <div class="input-group-append">
+                            <button type="button" v-on:click="onCleanPosition" class="btn btn-secondary" data-placement="left" title="Очистить поле">
+                              <font-awesome-icon icon="times" size="lg"/>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorSalary }}</label>
@@ -111,17 +118,22 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Начальник:</label>
                       <div class="col-sm-9">
-                        <select class="form-control" v-model="employee.head">
-                          <option disabled value="">Выберите начальника</option>
-                          <option v-for="h in heads" v-bind:value="h.id">
-                            {{ h.table_number }}: {{ h.nameWorker }} / {{ h.name_position }}
-                          </option>
-                        </select>
+                        <div class="input-group">
+                          <select class="form-control" v-model="employee.head">
+                            <option disabled value="">Выберите начальника</option>
+                            <option v-for="h in heads" v-bind:value="h.id">
+                              {{ h.table_number }}: {{ h.nameWorker }} / {{ h.name_position }}
+                            </option>
+                          </select>
+                          <div class="input-group-append">
+                            <button type="button" v-on:click="onCleanHead" class="btn btn-secondary" data-placement="left" title="Очистить поле">
+                              <font-awesome-icon icon="times" size="lg"/>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-xs-12 form-group">
                     <button class="btn btn-success">Изменить</button>
                   </div>
@@ -175,13 +187,14 @@
     },
     mounted() {
       let app = this;
+      app.employee.head = 0;
       let id = app.$route.params.id;
       app.photoDel = 0;
       app.dataPositions();
       axios.get('/api/employee/data/edit/' + id)
       .then(function (resp) {
         app.employee = resp.data.data;
-        app.employee.head = (resp.data.head)?resp.data.head.head_id:'';
+        app.employee.head = (resp.data.head)?resp.data.head.head_id:0;
         app.heads = resp.data.heads;
       })
       .catch(function () {
@@ -210,7 +223,7 @@
           }
         })
         .then( function(resp) {
-          app.employee.head = '';
+          app.employee.head = 0;
           app.heads = resp.data;
         })
         .catch(function(error) {
@@ -344,6 +357,13 @@
         this.employee.photo = '../../../img/example.jpg';
         this.$refs.photo.value = null;
         this.photoDel = 1;
+      },
+      onCleanHead() {
+        this.employee.head = 0;
+      },
+      onCleanPosition(){
+        this.employee.position_id = '';
+        this.employee.salary = '00,00';
       }
     }
   }

@@ -84,12 +84,19 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Должность:</label>
                       <div class="col-sm-9">
-                        <select class="form-control" v-model="employee.position_id" @change="onChange">
-                          <option disabled value="">Выберите должность</option>
-                          <option v-for="pos in positions" v-bind:value="pos.id">
-                            {{ pos.id }}. {{ pos.name_position }}
-                          </option>
-                        </select>
+                        <div class="input-group">
+                          <select class="form-control" v-model="employee.position_id" @change="onChange">
+                            <option disabled value="">Выберите должность</option>
+                            <option v-for="pos in positions" v-bind:value="pos.id">
+                              {{ pos.id }}. {{ pos.name_position }}
+                            </option>
+                          </select>
+                          <div class="input-group-append">
+                            <button type="button" v-on:click="onCleanPosition" class="btn btn-secondary" data-placement="left" title="Очистить поле">
+                              <font-awesome-icon icon="times" size="lg"/>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <label class="control-label" v-bind:class="{'hidden':isActive,'text-danger':hasError}">{{ errorSalary }}</label>
@@ -111,12 +118,19 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Начальник:</label>
                       <div class="col-sm-9">
-                        <select class="form-control" v-model="employee.head">
-                          <option disabled value="">Выберите начальника</option>
-                          <option v-for="h in heads" v-bind:value="h.id">
-                            {{ h.table_number }}: {{ h.nameWorker }} / {{ h.name_position }}
-                          </option>
-                        </select>
+                        <div class="input-group">
+                          <select class="form-control" v-model="employee.head">
+                            <option disabled value="">Выберите начальника</option>
+                            <option v-for="h in heads" v-bind:value="h.id">
+                              {{ h.table_number }}: {{ h.nameWorker }} / {{ h.name_position }}
+                            </option>
+                          </select>
+                          <div class="input-group-append">
+                            <button type="button" v-on:click="onCleanHead" class="btn btn-secondary" data-placement="left" title="Очистить поле">
+                              <font-awesome-icon icon="times" size="lg"/>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -164,6 +178,7 @@
         errorHead: '',
         errorTableNumber: '',
         errorPhoto: '',
+        photoDel: '',
       }
     },
     components: {
@@ -171,6 +186,7 @@
     },
     mounted() {
       this.employee.head = 0;
+      this.photoDel = 0;
       this.dataPositions();
     },
     methods : {
@@ -228,7 +244,10 @@
         data.append('position_id', app.employee.position_id);
         data.append('salary', app.employee.salary);
         data.append('reception_date', app.employee.reception_date);
-        data.append('photo', files[0]);
+        if (files[0]) {
+          data.append('photo', files[0]);
+        }
+        data.append('photoDelete', app.photoDel);
 
         axios.post('/api/employee/data/create', data)
           .then(function (resp) {
@@ -308,6 +327,7 @@
 
               reader.onload = function (e) {
                 app.employee.photo = e.target.result;
+                app.photoDel = 0;
               }
 
               reader.readAsDataURL(files[0]);
@@ -318,9 +338,17 @@
           }
         }
       },
-      onFileDelete(){
+      onFileDelete() {
         this.employee.photo = '../../img/example.jpg';
         this.$refs.photo.value = null;
+        this.photoDel = 1;
+      },
+      onCleanHead() {
+        this.employee.head = 0;
+      },
+      onCleanPosition(){
+        this.employee.position_id = '';
+        this.employee.salary = '00,00';
       }
     }
   }
