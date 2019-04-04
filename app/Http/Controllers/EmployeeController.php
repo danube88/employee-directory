@@ -84,7 +84,8 @@ class EmployeeController extends Controller
           'position_id' => 'required|numeric',
           'salary' => 'required|numeric',
           'reception_date' => 'required|date|before_or_equal:'.date("Y-m-d").'',
-          'photo' => 'file|image|max:1024|mimes:jpeg,jpg,bmp,png'
+          'photo' => 'file|image|max:1024|mimes:jpeg,jpg,bmp,png',
+          'photoDelete' => 'numeric'
       ];
       $validator = Validator::make($input, $rules);
       if ($validator->fails()) {
@@ -105,7 +106,7 @@ class EmployeeController extends Controller
           'reception_date' => $input['reception_date']
         ]);
 
-        if ($request->hasFile('photo')) {
+        if ($request->hasFile('photo') && $input['photoDelete'] == 0) {
           $file = $request->file('photo');
           $input['photo'] = $worker->id.'.'.$file->getClientOriginalExtension();
 
