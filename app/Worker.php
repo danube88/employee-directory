@@ -9,6 +9,7 @@ class Worker extends Model
     //
     protected $fillable = [
         'table_number',
+        'photo',
         'surname',
         'name',
         'patronymic',
@@ -17,4 +18,9 @@ class Worker extends Model
         'salary',
         'reception_date'
     ];
+
+    public function position()
+    {
+      return $this->belongsTo('App\Position','position_id','id');
+    }
 }

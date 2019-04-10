@@ -1,34 +1,16 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-import VueRouter from 'vue-router';
-window.Vue.use(VueRouter);
 
-//import ExampleComponent from './components/ExampleComponent.vue';
-import HierarchyComponent from './components/HierarchyComponent.vue';
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFolderPlus,faFolderMinus,faFolder } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faFolderPlus)
-library.add(faFolderMinus)
-library.add(faFolder)
+import { router } from './router/routes';
+import { store } from './vuex/store';
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
-
-const routes = [
-      {
-        path: '/',
-        redirect: '/hierarchy'
-      },
-      {
-         path: '/hierarchy',
-         components: {
-             hierarchyComponent: HierarchyComponent
-         },
-         name: 'Hierarchy'
+const app = new Vue({
+    created(){
+      if (this.$store.getters.isAuthenticated) {
+        this.$store.dispatch('userRequest');
       }
-     ]
-
-const router = new VueRouter({ routes })
-
-const app = new Vue({ router, data: { isHierarchy : true } }).$mount('#app')
+    },
+    router,
+    store
+  }).$mount('#app')

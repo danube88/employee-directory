@@ -71,4 +71,9 @@
     align-items: center;
     position: absolute;
   }
+  #navbarSupportedContent > ul.navbar-nav.mr-auto > li.nav-item.router-link-exact-active.router-link-active > a {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
 </style>
